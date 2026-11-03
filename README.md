@@ -163,6 +163,17 @@ Angular Dashboard
 
 No escribas el dominio de ejemplo como si fuera real: usa la URL que la plataforma genere al desplegar.
 
+### Vercel (gratis, sin tarjeta)
+
+`vercel.json` incluye el modelo (`models/**`) en la función y excluye lo que no hace falta en ejecución. Vercel detecta `app/main.py` como entrada de FastAPI.
+
+1. En Vercel: **Add New → Project**, importa `PyroGuard-IA` (rama `main`). Framework: FastAPI u Other.
+2. En **Settings → Environment Variables** crea `AI_API_KEY` con una clave larga.
+3. Despliega y abre `https://<proyecto>.vercel.app/health`.
+4. En el backend: `AI_SERVICE_URL=https://<proyecto>.vercel.app` (sin barra final) y la misma `AI_API_KEY`.
+
+Si el build falla por tamaño, el límite es ~500 MB por función (`scikit-learn`, `scipy`, `pandas` y `numpy` rozan esa cifra). La primera petición tras un rato sin uso tarda más por el arranque en frío.
+
 ## Limitaciones y trabajo pendiente
 
 - Sustituir progresivamente el dataset sintético por datos reales, etiquetados y recogidos bajo supervisión segura.
