@@ -1,3 +1,13 @@
+---
+title: PyroGuard IA
+emoji: 🔥
+colorFrom: red
+colorTo: yellow
+sdk: docker
+app_port: 8001
+pinned: false
+---
+
 # PyroGuard-IA — Servicio de Machine Learning
 
 Servicio de inferencia de IA para **PyroGuard / Forest Guardian**. Implementa un clasificador **Random Forest** entrenado localmente con un dataset sintético y lo expone mediante una API REST propia con FastAPI.
@@ -162,6 +172,17 @@ Angular Dashboard
 5. Configura en el backend `AI_SERVICE_URL=https://TU-SERVICIO.onrender.com` y `AI_API_KEY` con el mismo valor secreto.
 
 No escribas el dominio de ejemplo como si fuera real: usa la URL que la plataforma genere al desplegar.
+
+### Hugging Face Spaces (gratis, sin tarjeta)
+
+El bloque YAML al inicio de este README es la configuración del Space (`sdk: docker`, `app_port: 8001`); GitHub lo muestra como una tabla.
+
+1. En huggingface.co crea un Space: **New → Space**, nombre `pyroguard-ia`, **SDK: Docker → Blank**.
+2. En el Space, **Settings → Variables and secrets**, crea el secreto `AI_API_KEY` con una clave larga.
+3. Sube el código: `git remote add hf https://huggingface.co/spaces/<usuario>/pyroguard-ia` y `git push hf main`. Como contraseña se usa un token de acceso con permiso de escritura (huggingface.co/settings/tokens).
+4. Cuando termine el build, `https://<usuario>-pyroguard-ia.hf.space/health` debe responder. La URL del backend (`AI_SERVICE_URL`) es esa, sin barra final.
+
+El Space se duerme tras un tiempo sin uso y despierta con la primera petición.
 
 ## Limitaciones y trabajo pendiente
 
