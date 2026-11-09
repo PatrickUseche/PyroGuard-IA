@@ -7,9 +7,10 @@ Servicio de inferencia de IA para **PyroGuard / Forest Guardian**. Implementa un
 ## Qué incluye
 
 - Dataset simulado alineado con el contrato: `node_id`, `temperature`, `humidity`, `smoke`, `gas`, `flame`, `timestamp`, `label`.
-- Entrenamiento Random Forest, partición estratificada 80/20 y métricas `accuracy`, `precision`, `recall`, `F1-score` y matriz de confusión.
-- Artefacto versionado `models/modelo_riesgo.joblib` para que la API inicie sin entrenar en cada arranque.
-- API REST con `GET /health`, `GET /` y `POST /predict`; documentación Swagger automática en `/docs`.
+- Entrenamiento Random Forest con probabilidades **calibradas** (regresión isotónica), partición estratificada 80/20 y métricas `accuracy`, `precision`, `recall`, `F1-score`, matriz de confusión y calidad de las probabilidades (log-loss, Brier, error de calibración).
+- Artefacto versionado `models/modelo_riesgo.joblib` para que la API inicie sin entrenar en cada arranque, junto a `models/modelo_riesgo.meta.json` con la versión, el SHA-256 del dataset que lo entrenó y sus métricas (`/health` expone el mismo hash).
+- API REST con `GET /health`, `GET /`, `POST /predict`, `POST /predict/batch` (hasta 100 lecturas) y `GET /metrics` (latencia y predicciones por nivel de riesgo); documentación Swagger automática en `/docs`.
+- Herramientas para medir el modelo con lecturas del backend etiquetadas a mano (`docs/ETIQUETADO.md`) y comparación de modelos (`docs/COMPARACION_MODELOS.md`).
 - Reglas de seguridad RF08 que combinan la salida del modelo con señales de sensores y no convierten una lectura aislada de llama en `FIRE`.
 - Pruebas automatizadas, Dockerfile y configuración base para Render.
 - Contrato de integración con PyroGuard-Backend en `docs/CONTRATO_IA_BACKEND.md`.
@@ -59,7 +60,7 @@ Ejemplo de entrada compatible con el contrato del documento:
 La respuesta incluye:
 
 - `model_prediction`: clase elegida directamente por Random Forest.
-- `probabilities`: probabilidades estimadas por clase (no necesariamente calibradas).
+- `probabilities`: probabilidades por clase, calibradas con regresión isotónica sobre datos sintéticos.
 - `risk_probability`: suma `P(WARNING) + P(FIRE)`, expresada entre `0.0` y `1.0`.
 - `risk_probability_percent`: la misma puntuación en porcentaje.
 - `risk_level`: clasificación final tras las reglas de corroboración.
@@ -107,7 +108,9 @@ python scripts/2_entrenar_modelo.py
 python -m pytest -q
 ```
 
-El dataset tiene 2.400 filas sintéticas, 800 por clase. El script usa un split estratificado 80/20 y escribe el modelo, el reporte de clasificación y la matriz de confusión.
+El dataset tiene 2.400 filas sintéticas, 800 por clase. El script usa un split estratificado 80/20, calibra las probabilidades y escribe el modelo, el reporte de clasificación, la matriz de confusión y `models/modelo_riesgo.meta.json`. Si cambias `data/dataset_sintetico.csv` sin reentrenar, `tests/test_model_artifact.py` falla.
+
+Otros scripts: `4_importar_lecturas.py` y `5_informe_metricas.py` (flujo de etiquetado) y `6_comparar_modelos.py` (regenera `docs/COMPARACION_MODELOS.md`).
 
 Para probar casos prediseñados:
 
@@ -164,7 +167,7 @@ Angular Dashboard
 
 1. Crea un Web Service apuntando al repositorio `PyroGuard-IA`.
 2. Usa `render.yaml` (o define Build Command `pip install -r requirements.txt`, Start Command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, Health Check Path `/health`).
-3. Define una variable secreta `AI_API_KEY` si el servicio queda público.
+3. Define la variable secreta `AI_API_KEY` (el `render.yaml` fija `APP_ENV=production`, así que el servicio no arranca sin ella).
 4. Verifica `https://TU-SERVICIO.onrender.com/health` y la documentación en `/docs`.
 5. Configura en el backend `AI_SERVICE_URL=https://TU-SERVICIO.onrender.com` y `AI_API_KEY` con el mismo valor secreto.
 
@@ -183,7 +186,7 @@ Si el build falla por tamaño, el límite es ~500 MB por función (`scikit-learn
 
 ## Limitaciones y trabajo pendiente
 
-- Sustituir progresivamente el dataset sintético por datos reales, etiquetados y recogidos bajo supervisión segura.
+- Sustituir progresivamente el dataset sintético por datos reales, etiquetados y recogidos bajo supervisión segura. Hoy el backend solo recibe lecturas del simulador: el flujo de etiquetado está listo, pero `data/lecturas_etiquetadas.csv` no existe todavía y las métricas por clase sobre datos etiquetados quedan pendientes.
 - Revisar umbrales de RF08 con el docente y el equipo de hardware.
 - Medir recall de FIRE, falsos negativos y falsos positivos en un conjunto separado que represente el entorno objetivo.
 - Verificar contrato exacto del ESP32: escala real del sensor de humo/gas y codificación de `flame`.
