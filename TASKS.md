@@ -38,7 +38,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 
 ## Fase 2 — Versionado y regresión del modelo
 
-- [ ] feat(model): el entrenamiento escribe `models/modelo_riesgo.meta.json` con versión, SHA-256 del dataset, filas y métricas [2.1]
+- [x] feat(model): el entrenamiento escribe `models/modelo_riesgo.meta.json` con versión, SHA-256 del dataset, filas y métricas [2.1]
 - [ ] feat(api): `/health` expone `dataset_sha256` y el predictor avisa si cambia la versión de scikit-learn [2.2]
 - [ ] test(model): el artefacto, el `meta.json` y el CSV son coherentes entre sí [2.3]
 - [ ] test(api): pruebas de regresión con escenarios `normal`, `warning` y `fire` para detectar cambios de comportamiento [2.4]

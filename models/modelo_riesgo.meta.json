@@ -1,0 +1,63 @@
+{
+  "model_version": "pyroguard-rf-1.0.0",
+  "trained_at_utc": "2026-11-09T16:01:44.959678+00:00",
+  "dataset_type": "synthetic",
+  "dataset_path": "data/dataset_sintetico.csv",
+  "dataset_sha256": "ff5a6bba3784de62afb19d317560a9f85cd42355c1c0f2faa22f56e035824698",
+  "dataset_rows": 2400,
+  "train_rows": 1920,
+  "test_rows": 480,
+  "features": [
+    "temperature",
+    "humidity",
+    "smoke",
+    "gas",
+    "flame"
+  ],
+  "labels": [
+    "NORMAL",
+    "WARNING",
+    "FIRE"
+  ],
+  "accuracy": 0.983333,
+  "classification_report": {
+    "NORMAL": {
+      "precision": 0.9815950920245399,
+      "recall": 1.0,
+      "f1-score": 0.9907120743034056,
+      "support": 160.0
+    },
+    "WARNING": {
+      "precision": 0.9810126582278481,
+      "recall": 0.96875,
+      "f1-score": 0.9748427672955975,
+      "support": 160.0
+    },
+    "FIRE": {
+      "precision": 0.9874213836477987,
+      "recall": 0.98125,
+      "f1-score": 0.9843260188087775,
+      "support": 160.0
+    },
+    "accuracy": 0.9833333333333333,
+    "macro avg": {
+      "precision": 0.9833430446333956,
+      "recall": 0.9833333333333334,
+      "f1-score": 0.9832936201359268,
+      "support": 480.0
+    },
+    "weighted avg": {
+      "precision": 0.9833430446333956,
+      "recall": 0.9833333333333333,
+      "f1-score": 0.9832936201359269,
+      "support": 480.0
+    }
+  },
+  "confusion_matrix_labels_order": [
+    "NORMAL",
+    "WARNING",
+    "FIRE"
+  ],
+  "scikit_learn_version": "1.8.0",
+  "limitations": "Métricas sobre datos sintéticos; no estiman desempeño en incendios reales."
+}
