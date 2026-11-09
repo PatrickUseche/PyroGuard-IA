@@ -4,10 +4,18 @@ import time
 from contextlib import asynccontextmanager
 from functools import lru_cache
 from fastapi import Depends, FastAPI, Header, HTTPException, status
-from app.errors import logger, register_error_handlers
+from pydantic import ValidationError
+from app.errors import group_validation_errors, logger, register_error_handlers
 from app.metrics import metrics
 from app.predictor import RiskPredictor
-from app.schemas import HealthResponse, MetricsResponse, PredictionResponse, SensorReadingInput
+from app.schemas import (
+    BatchRequest,
+    BatchResponse,
+    HealthResponse,
+    MetricsResponse,
+    PredictionResponse,
+    SensorReadingInput,
+)
 
 def is_production() -> bool:
     return os.getenv("APP_ENV", "").strip().lower() == "production"
@@ -86,6 +94,35 @@ def predict(reading: SensorReadingInput) -> dict:
     except (ValueError, KeyError) as exc:
         logger.exception("Falló la predicción para el nodo %s", reading.node_id)
         raise HTTPException(status_code=500, detail="No se pudo calcular la predicción.") from exc
+
+
+@app.post("/predict/batch", response_model=BatchResponse, tags=["prediction"], dependencies=[Depends(verify_api_key)])
+def predict_batch(batch: BatchRequest) -> dict:
+    valid: list[tuple[int, dict]] = []
+    results: list[dict | None] = [None] * len(batch.readings)
+    for index, raw in enumerate(batch.readings):
+        try:
+            valid.append((index, SensorReadingInput.model_validate(raw).model_dump()))
+        except ValidationError as exc:
+            results[index] = {"status": "error", "index": index, "errors": group_validation_errors(exc.errors())}
+    if valid:
+        try:
+            predictor = get_predictor()
+        except (FileNotFoundError, ValueError) as exc:
+            logger.error("No se pudo cargar el modelo: %s", exc)
+            raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
+        started = time.perf_counter()
+        try:
+            predictions = predictor.predict_many([reading for _, reading in valid])
+        except (ValueError, KeyError) as exc:
+            logger.exception("Falló la predicción del lote de %d lecturas", len(valid))
+            raise HTTPException(status_code=500, detail="No se pudo calcular la predicción.") from exc
+        per_reading = (time.perf_counter() - started) / len(valid)
+        for (index, _), prediction in zip(valid, predictions):
+            results[index] = prediction
+            metrics.record_prediction(prediction["risk_level"], per_reading)
+    failed = len(batch.readings) - len(valid)
+    return {"count": len(results), "succeeded": len(valid), "failed": failed, "results": results}
 
 
 @app.get("/metrics", response_model=MetricsResponse, tags=["health"], dependencies=[Depends(verify_api_key)])

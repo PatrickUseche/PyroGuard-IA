@@ -79,3 +79,28 @@ class MetricsResponse(BaseModel):
     predictions_total: int
     predictions_by_risk_level: dict[str, int]
     latency_ms: LatencyMetrics
+
+
+# Máximo de lecturas por petición a /predict/batch (acota el tiempo de respuesta y la memoria).
+MAX_BATCH_SIZE = 100
+
+
+class BatchRequest(BaseModel):
+    # Cada lectura se valida por separado en el endpoint, para que una inválida no rechace todo el lote.
+    readings: list[dict[str, Any]] = Field(..., min_length=1, max_length=MAX_BATCH_SIZE)
+
+
+class BatchItemError(BaseModel):
+    status: Literal["error"] = "error"
+    index: int = Field(..., ge=0, description="Posición de la lectura en la petición")
+    errors: dict[str, list[str]]
+
+
+class BatchResponse(BaseModel):
+    status: Literal["ok"] = "ok"
+    contract_version: str = CONTRACT_VERSION
+    count: int
+    succeeded: int
+    failed: int
+    # Mismo orden que la petición: una predicción o el error de esa posición.
+    results: list[PredictionResponse | BatchItemError]
