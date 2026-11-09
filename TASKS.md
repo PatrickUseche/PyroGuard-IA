@@ -21,7 +21,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 
 - [x] test(safety): pruebas parametrizadas de cada umbral de las reglas de seguridad [0.1]
 - [x] feat(api): cargar el modelo al arrancar el servicio en vez de en la primera petición [0.2]
-- [ ] refactor(predictor): quitar el reparseo de `timestamp`, que Pydantic ya convierte [0.3]
+- [x] refactor(predictor): quitar el reparseo de `timestamp`, que Pydantic ya convierte [0.3]
 
 ## Fase 1 — Servicio
 
