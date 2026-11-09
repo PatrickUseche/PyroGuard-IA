@@ -169,7 +169,8 @@ lecturas válidas. Ejemplo: `metrics_response.json`.
 
 ## 6. Salud
 
-`GET /health` (sin autenticación) devuelve `{"status": "ok"|"degraded", "model_loaded": bool, "model_version": str|null, "classes": [...]}`.
+`GET /health` (sin autenticación) devuelve `{"status": "ok"|"degraded", "model_loaded": bool, "model_version": str|null, "dataset_sha256": str|null, "classes": [...]}`.
+`dataset_sha256` (añadido en 1.1) identifica el dataset con el que se entrenó el modelo cargado y coincide con `models/modelo_riesgo.meta.json`.
 El backend puede exponerlo de forma opcional para monitoreo; no se consulta en cada lectura.
 
 ## 7. Brechas detectadas en la revisión (2026-10-22) y resolución

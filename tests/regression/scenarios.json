@@ -1,0 +1,23 @@
+{
+  "_comment": "Escenarios de regresión: el nivel esperado lo decide una persona, no se copia de la salida. Si cambia el modelo y alguno falla, revisa si el cambio de comportamiento es intencional antes de editar este archivo.",
+  "scenarios": [
+    {"name": "normal_forest_morning", "reading": {"temperature": 18, "humidity": 80, "smoke": 5, "gas": 2, "flame": false},
+     "expected": {"risk_level": "NORMAL", "rule": "NORMAL_BASELINE", "model_prediction": "NORMAL"}},
+    {"name": "normal_warm_humid", "reading": {"temperature": 28, "humidity": 60, "smoke": 20, "gas": 10, "flame": false},
+     "expected": {"risk_level": "NORMAL", "rule": "NORMAL_BASELINE", "model_prediction": "NORMAL"}},
+    {"name": "normal_no_gas_sensor", "reading": {"temperature": 21, "humidity": 55, "smoke": 0, "gas": null, "flame": false},
+     "expected": {"risk_level": "NORMAL", "rule": "NORMAL_BASELINE", "model_prediction": "NORMAL"}},
+    {"name": "warning_hot_dry", "reading": {"temperature": 36, "humidity": 25, "smoke": 70, "gas": 20, "flame": false},
+     "expected": {"risk_level": "WARNING", "rule": "WARNING_REVIEW", "model_prediction": "WARNING"}},
+    {"name": "warning_smoke_rising", "reading": {"temperature": 26, "humidity": 50, "smoke": 150, "gas": 60, "flame": false},
+     "expected": {"risk_level": "WARNING", "rule": "WARNING_REVIEW", "model_prediction": "WARNING"}},
+    {"name": "warning_flame_only_is_not_fire", "reading": {"temperature": 24, "humidity": 70, "smoke": 5, "gas": 0, "flame": true},
+     "expected": {"risk_level": "WARNING", "rule": "WARNING_REVIEW", "model_prediction": "NORMAL"}},
+    {"name": "fire_all_sensors", "reading": {"temperature": 48, "humidity": 10, "smoke": 320, "gas": 150, "flame": true},
+     "expected": {"risk_level": "FIRE", "rule": "FIRE_CORROBORATED", "model_prediction": "FIRE"}},
+    {"name": "fire_flame_and_smoke_rules_raise_the_model", "reading": {"temperature": 30, "humidity": 40, "smoke": 100, "gas": 10, "flame": true},
+     "expected": {"risk_level": "FIRE", "rule": "FIRE_CORROBORATED", "model_prediction": "WARNING"}},
+    {"name": "fire_without_flame_but_corroborated", "reading": {"temperature": 55, "humidity": 12, "smoke": 400, "gas": 300, "flame": false},
+     "expected": {"risk_level": "FIRE", "rule": "FIRE_CORROBORATED", "model_prediction": "FIRE"}}
+  ]
+}

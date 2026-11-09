@@ -74,7 +74,13 @@ def root() -> dict:
 def health() -> HealthResponse:
     try:
         predictor = get_predictor()
-        return HealthResponse(status="ok", model_loaded=True, model_version=predictor.model_version, classes=predictor.classes)
+        return HealthResponse(
+            status="ok",
+            model_loaded=True,
+            model_version=predictor.model_version,
+            dataset_sha256=predictor.dataset_sha256,
+            classes=predictor.classes,
+        )
     except Exception:
         return HealthResponse(status="degraded", model_loaded=False, model_version=None, classes=[])
 

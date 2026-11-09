@@ -1,13 +1,16 @@
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 import joblib
 import pandas as pd
+import sklearn
 
 from app.safety_rules import evaluate_safety_rules
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_MODEL_PATH = ROOT_DIR / "models" / "modelo_riesgo.joblib"
+logger = logging.getLogger("pyroguard.api")
 FEATURE_COLUMNS = ["temperature", "humidity", "smoke", "gas", "flame"]
 DISCLAIMER = (
     "Prototipo académico entrenado con datos sintéticos. Las salidas no son una detección certificada "
@@ -25,6 +28,15 @@ class RiskPredictor:
         self.model_version = str(artifact.get("model_version", "unknown"))
         self.feature_columns = list(artifact.get("feature_columns", FEATURE_COLUMNS))
         self.training_data_type = str(artifact.get("training_data_type", "unknown"))
+        # Trazabilidad: con qué datos y con qué versión de scikit-learn se entrenó este artefacto.
+        self.dataset_sha256 = artifact.get("dataset_sha256")
+        self.trained_with_sklearn = artifact.get("scikit_learn_version")
+        if self.trained_with_sklearn and self.trained_with_sklearn != sklearn.__version__:
+            logger.warning(
+                "El modelo se entrenó con scikit-learn %s y el servicio usa %s; reentrena si hay resultados raros.",
+                self.trained_with_sklearn,
+                sklearn.__version__,
+            )
         if self.feature_columns != FEATURE_COLUMNS:
             raise ValueError(f"Columnas incompatibles en el modelo: {self.feature_columns}")
         if set(self.model.classes_) != {"NORMAL", "WARNING", "FIRE"}:

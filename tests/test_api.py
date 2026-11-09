@@ -113,3 +113,23 @@ def test_service_starts_even_if_the_model_cannot_be_loaded(monkeypatch):
     monkeypatch.setattr(main, "get_predictor", failing_loader)
     with TestClient(main.app) as started:
         assert started.get("/health").json()["status"] == "degraded"
+
+
+def test_health_exposes_the_dataset_hash_of_the_loaded_model():
+    from app.model_meta import load_meta
+
+    body = client.get("/health").json()
+    assert body["dataset_sha256"] == load_meta()["dataset_sha256"]
+    assert len(body["dataset_sha256"]) == 64
+
+
+def test_health_has_no_dataset_hash_when_the_model_is_unavailable(monkeypatch):
+    from app import main
+
+    def failing_loader():
+        raise FileNotFoundError("sin modelo")
+
+    monkeypatch.setattr(main, "get_predictor", failing_loader)
+    body = client.get("/health").json()
+    assert body["status"] == "degraded"
+    assert body["dataset_sha256"] is None
