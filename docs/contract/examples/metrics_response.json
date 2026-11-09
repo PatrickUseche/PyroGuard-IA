@@ -1,0 +1,14 @@
+{
+  "predictions_total": 1250,
+  "predictions_by_risk_level": {
+    "NORMAL": 1100,
+    "WARNING": 120,
+    "FIRE": 30
+  },
+  "latency_ms": {
+    "count": 1250,
+    "average": 4.8,
+    "p95": 9.6,
+    "max": 41.2
+  }
+}

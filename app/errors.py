@@ -33,12 +33,17 @@ def _field_name(error: dict[str, Any]) -> str:
     return ".".join(str(part) for part in location)
 
 
-async def validation_exception_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
+def group_validation_errors(raw_errors: list[dict[str, Any]]) -> dict[str, list[str]]:
+    """Agrupa los errores de Pydantic por campo: `{"campo": ["mensaje", ...]}`."""
     # No se devuelve el valor recibido: puede no ser serializable (NaN) y no aporta al cliente.
     errors: dict[str, list[str]] = {}
-    for error in exc.errors():
+    for error in raw_errors:
         errors.setdefault(_field_name(error), []).append(str(error.get("msg", "Valor inválido")))
-    return error_response(422, ERROR_CODES[422], errors)
+    return errors
+
+
+async def validation_exception_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
+    return error_response(422, ERROR_CODES[422], group_validation_errors(exc.errors()))
 
 
 async def http_exception_handler(_request: Request, exc: StarletteHTTPException) -> JSONResponse:

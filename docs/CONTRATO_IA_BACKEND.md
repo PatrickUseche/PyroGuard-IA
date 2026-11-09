@@ -1,4 +1,4 @@
-# Contrato de integración PyroGuard-IA ↔ PyroGuard-Backend (v1.0)
+# Contrato de integración PyroGuard-IA ↔ PyroGuard-Backend (v1.1)
 
 Este documento define el contrato HTTP entre el servicio de inferencia (`PyroGuard-IA`, FastAPI) y el
 backend (`PyroGuard-Backend`, Django REST Framework). Es la referencia única para ambos repositorios:
@@ -126,7 +126,8 @@ de error nunca incluyen el valor recibido ni detalles internos de la excepción.
 
 | Variable | Servicio | Ejemplo | Descripción |
 |---|---|---|---|
-| `AI_API_KEY` | IA y backend | `cambia-esta-clave` | Vacía en IA ⇒ endpoint abierto (solo desarrollo local) |
+| `AI_API_KEY` | IA y backend | `cambia-esta-clave` | Vacía en IA ⇒ endpoint abierto (solo desarrollo local); con `APP_ENV=production` la IA no arranca sin ella |
+| `APP_ENV` | IA | `production` | Con el valor `production` (sin distinguir mayúsculas) la clave pasa a ser obligatoria al arrancar |
 | `AI_SERVICE_URL` | backend | `http://127.0.0.1:8001` | Vacía ⇒ IA deshabilitada (`ai_status=DISABLED`) |
 | `AI_CONNECT_TIMEOUT` | backend | `3.0` | Segundos máximos para establecer la conexión; detecta rápido un servicio caído |
 | `AI_READ_TIMEOUT` | backend | `10.0` | Segundos máximos de espera de la respuesta de inferencia una vez conectado |
@@ -135,6 +136,36 @@ El backend envía `timeout=(AI_CONNECT_TIMEOUT, AI_READ_TIMEOUT)`, de modo que c
 fase. Con los valores por defecto, una lectura puede esperar hasta ~13 s a la IA antes de responder al
 nodo; el timeout HTTP del ESP32 debe ser mayor para que no reintente lecturas ya guardadas.
 `AI_SERVICE_TIMEOUT` ya no se usa.
+
+## 5.1 Endpoints adicionales (v1.1)
+
+Ambos usan la misma cabecera `X-AI-API-Key` y el mismo formato de error que `/predict`. El backend actual
+sigue llamando a `/predict`; estos endpoints son compatibles hacia atrás y no cambian el contrato de `/predict`.
+
+### `POST /predict/batch`
+
+Clasifica varias lecturas en una sola petición (máximo **100**; vacío o más de 100 ⇒ `422 VALIDATION_ERROR`
+con el campo `readings`). Cuerpo: `{"readings": [<lectura>, ...]}`, con cada lectura igual a la de `/predict`.
+
+Cada lectura se valida por separado: una inválida **no** rechaza el lote. La respuesta es `200` con
+`count`, `succeeded`, `failed` y `results`, en el mismo orden que la petición. Cada elemento es una
+predicción (igual que la respuesta de `/predict`) o `{"status": "error", "index": n, "errors": {...}}`, con
+los errores agrupados por campo y sin el valor recibido. Si todas son inválidas no hace falta el modelo; si
+alguna es válida y el modelo no carga ⇒ `503 MODEL_UNAVAILABLE`. Ejemplos: `batch_request.json` y `batch_response.json`.
+
+### `GET /metrics`
+
+Contadores en memoria del proceso (se reinician con cada arranque): `predictions_total`,
+`predictions_by_risk_level` (`NORMAL`/`WARNING`/`FIRE`) y `latency_ms` (`count`, `average`, `p95` sobre las
+últimas 500 y `max`). Solo cuentan las predicciones correctas; en un lote, el tiempo se reparte entre sus
+lecturas válidas. Ejemplo: `metrics_response.json`.
+
+### Historial de versiones
+
+| Versión | Cambio |
+|---|---|
+| 1.0 | `POST /predict`, `GET /health`, errores uniformes |
+| 1.1 | Añade `POST /predict/batch` y `GET /metrics`; `contract_version` pasa a `1.1` |
 
 ## 6. Salud
 

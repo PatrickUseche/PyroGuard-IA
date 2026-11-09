@@ -4,11 +4,11 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 RiskLevel = Literal["NORMAL", "WARNING", "FIRE"]
 # Versión de docs/CONTRATO_IA_BACKEND.md; subirla al cambiar campos, rangos o errores.
-CONTRACT_VERSION = "1.0"
+CONTRACT_VERSION = "1.1"
 
 
 class SensorReadingInput(BaseModel):
-    """Entrada alineada con la validación de PyroGuard-Backend (contrato v1.0)."""
+    """Entrada alineada con la validación de PyroGuard-Backend (contrato v1.1)."""
     model_config = ConfigDict(extra="ignore", allow_inf_nan=False)
 
     node_id: str = Field(..., min_length=1, max_length=50, description="Identificador del nodo ESP32")
@@ -65,3 +65,42 @@ class HealthResponse(BaseModel):
     model_loaded: bool
     model_version: str | None = None
     classes: list[str] = []
+
+
+class LatencyMetrics(BaseModel):
+    count: int
+    average: float
+    p95: float
+    max: float
+
+
+class MetricsResponse(BaseModel):
+    """Contadores en memoria del proceso; se reinician con cada arranque."""
+    predictions_total: int
+    predictions_by_risk_level: dict[str, int]
+    latency_ms: LatencyMetrics
+
+
+# Máximo de lecturas por petición a /predict/batch (acota el tiempo de respuesta y la memoria).
+MAX_BATCH_SIZE = 100
+
+
+class BatchRequest(BaseModel):
+    # Cada lectura se valida por separado en el endpoint, para que una inválida no rechace todo el lote.
+    readings: list[dict[str, Any]] = Field(..., min_length=1, max_length=MAX_BATCH_SIZE)
+
+
+class BatchItemError(BaseModel):
+    status: Literal["error"] = "error"
+    index: int = Field(..., ge=0, description="Posición de la lectura en la petición")
+    errors: dict[str, list[str]]
+
+
+class BatchResponse(BaseModel):
+    status: Literal["ok"] = "ok"
+    contract_version: str = CONTRACT_VERSION
+    count: int
+    succeeded: int
+    failed: int
+    # Mismo orden que la petición: una predicción o el error de esa posición.
+    results: list[PredictionResponse | BatchItemError]

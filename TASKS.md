@@ -25,16 +25,16 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 
 ## Fase 1 — Servicio
 
-- [ ] feat(security): con `APP_ENV=production` el servicio no arranca sin `AI_API_KEY` [1.1]
-- [ ] test(security): pruebas del arranque en producción con y sin clave [1.2]
-- [ ] chore(deploy): declarar `APP_ENV` y `AI_API_KEY` en `render.yaml` y reflejarlo en el contrato [1.3]
-- [ ] feat(api): contadores en memoria de latencia y de predicciones por nivel de riesgo [1.4]
-- [ ] feat(api): `GET /metrics`, protegido con la misma clave que `/predict` [1.5]
-- [ ] test(api): pruebas de `/metrics` y de que exige la clave [1.6]
-- [ ] feat(ml): `RiskPredictor.predict_many` vectorizado, con una sola llamada al modelo [1.7]
-- [ ] feat(api): `POST /predict/batch` con límite de tamaño y resultado por lectura [1.8]
-- [ ] test(api): pruebas de `/predict/batch` (errores parciales, límite y equivalencia con `/predict`) [1.9]
-- [ ] docs: contrato v1.1 con `/metrics`, `/predict/batch` y sus ejemplos ejecutables [1.10]
+- [x] feat(security): con `APP_ENV=production` el servicio no arranca sin `AI_API_KEY` [1.1]
+- [x] test(security): pruebas del arranque en producción con y sin clave [1.2]
+- [x] chore(deploy): declarar `APP_ENV` y `AI_API_KEY` en `render.yaml` y reflejarlo en el contrato [1.3]
+- [x] feat(api): contadores en memoria de latencia y de predicciones por nivel de riesgo [1.4]
+- [x] feat(api): `GET /metrics`, protegido con la misma clave que `/predict` [1.5]
+- [x] test(api): pruebas de `/metrics` y de que exige la clave [1.6]
+- [x] feat(ml): `RiskPredictor.predict_many` vectorizado, con una sola llamada al modelo [1.7]
+- [x] feat(api): `POST /predict/batch` con límite de tamaño y resultado por lectura [1.8]
+- [x] test(api): pruebas de `/predict/batch` (errores parciales, límite y equivalencia con `/predict`) [1.9]
+- [x] docs: contrato v1.1 con `/metrics`, `/predict/batch` y sus ejemplos ejecutables [1.10]
 
 ## Fase 2 — Versionado y regresión del modelo
 
