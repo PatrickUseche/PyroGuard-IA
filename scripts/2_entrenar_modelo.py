@@ -23,7 +23,7 @@ CONFUSION_PATH = ROOT / "reports" / "confusion_matrix.csv"
 FEATURES = ["temperature", "humidity", "smoke", "gas", "flame"]
 LABELS = ["NORMAL", "WARNING", "FIRE"]
 META_PATH = DEFAULT_META_PATH
-MODEL_VERSION = "pyroguard-rf-1.0.0"
+MODEL_VERSION = "pyroguard-rf-1.1.0"
 
 
 def main() -> None:
@@ -86,6 +86,7 @@ def main() -> None:
         "model_version": MODEL_VERSION,
         "feature_columns": FEATURES,
         "training_data_type": "synthetic",
+        "calibration": CALIBRATION_METHOD,
         "dataset_sha256": metrics["dataset_sha256"],
         "dataset_rows": metrics["dataset_rows"],
         "trained_at_utc": metrics["trained_at_utc"],

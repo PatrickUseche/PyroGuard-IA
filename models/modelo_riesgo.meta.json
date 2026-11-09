@@ -1,6 +1,6 @@
 {
-  "model_version": "pyroguard-rf-1.0.0",
-  "trained_at_utc": "2026-11-09T16:01:44.959678+00:00",
+  "model_version": "pyroguard-rf-1.1.0",
+  "trained_at_utc": "2026-11-09T16:16:20.107302+00:00",
   "dataset_type": "synthetic",
   "dataset_path": "data/dataset_sintetico.csv",
   "dataset_sha256": "ff5a6bba3784de62afb19d317560a9f85cd42355c1c0f2faa22f56e035824698",
@@ -20,6 +20,20 @@
     "FIRE"
   ],
   "accuracy": 0.983333,
+  "calibration": {
+    "method": "isotonic",
+    "folds": 5,
+    "uncalibrated": {
+      "log_loss": 0.071088,
+      "brier": 0.032951,
+      "expected_calibration_error": 0.017827
+    },
+    "calibrated": {
+      "log_loss": 0.071774,
+      "brier": 0.031462,
+      "expected_calibration_error": 0.006717
+    }
+  },
   "classification_report": {
     "NORMAL": {
       "precision": 0.9815950920245399,

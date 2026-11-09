@@ -3,6 +3,9 @@
 Un bosque suele dar probabilidades poco confiables (por ejemplo, 0,9 de «FIRE» que acierta menos del 90 % de las veces).
 Las reglas de seguridad y el backend usan esas probabilidades como umbrales, así que se calibran con regresión isotónica
 y validación cruzada interna (`CalibratedClassifierCV`), que mantiene `classes_` y `predict_proba`.
+
+Se usa `ensemble=False`: el calibrador se ajusta con predicciones fuera de pliegue pero el modelo final es un solo bosque.
+Con el valor por defecto se guardan 5 bosques (~10 MB) y cada predicción tarda ~4 veces más, lo que el backend no tolera.
 """
 from typing import Any
 
@@ -19,7 +22,7 @@ ECE_BINS = 10
 def calibrate(base_model: Any, features: pd.DataFrame, target: pd.Series, method: str = CALIBRATION_METHOD,
               folds: int = CALIBRATION_FOLDS) -> CalibratedClassifierCV:
     """Entrena `base_model` (una copia por pliegue) y ajusta el calibrador sobre las predicciones fuera de pliegue."""
-    return CalibratedClassifierCV(base_model, method=method, cv=folds).fit(features, target)
+    return CalibratedClassifierCV(base_model, method=method, cv=folds, ensemble=False).fit(features, target)
 
 
 def multiclass_brier(probabilities: np.ndarray, truth: pd.Series, classes: list[str]) -> float:
