@@ -94,3 +94,22 @@ def test_rejects_out_of_range_values(field, value):
     payload[field] = value
     response = client.post("/predict", json=payload)
     assert response.status_code == 422
+
+
+def test_model_is_loaded_when_the_service_starts(monkeypatch):
+    from app import main
+
+    main.get_predictor.cache_clear()
+    with TestClient(main.app):
+        assert main.get_predictor.cache_info().currsize == 1
+
+
+def test_service_starts_even_if_the_model_cannot_be_loaded(monkeypatch):
+    from app import main
+
+    def failing_loader():
+        raise FileNotFoundError("sin modelo")
+
+    monkeypatch.setattr(main, "get_predictor", failing_loader)
+    with TestClient(main.app) as started:
+        assert started.get("/health").json()["status"] == "degraded"
