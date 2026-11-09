@@ -57,7 +57,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 ## Fase 4 — Modelo sobre esos datos
 
 - [x] test(ml): comparar Random Forest con otros modelos usando validación cruzada y documentar el resultado [4.1]
-- [ ] feat(ml): calibrar las probabilidades del modelo [4.2]
+- [x] feat(ml): calibrar las probabilidades del modelo [4.2]
 - [ ] test(ml): pruebas de la calibración (rango y suma de probabilidades) [4.3]
 - [ ] chore(model): reentrenar y regenerar el `meta.json` [4.4]
 

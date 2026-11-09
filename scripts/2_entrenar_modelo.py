@@ -6,12 +6,14 @@ import sys
 import joblib
 import pandas as pd
 import sklearn
+from sklearn.base import clone
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+from app.calibration import CALIBRATION_FOLDS, CALIBRATION_METHOD, calibrate, probability_quality  # noqa: E402
 from app.model_meta import DEFAULT_META_PATH, dataset_sha256  # noqa: E402
 
 DATA_PATH = ROOT / "data" / "dataset_sintetico.csv"
@@ -42,7 +44,7 @@ def main() -> None:
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.20, random_state=42, stratify=y
     )
-    model = RandomForestClassifier(
+    forest = RandomForestClassifier(
         n_estimators=300,
         max_features="sqrt",
         min_samples_leaf=2,
@@ -50,7 +52,9 @@ def main() -> None:
         random_state=42,
         n_jobs=-1,
     )
-    model.fit(X_train, y_train)
+    # El bosque sin calibrar solo sirve de referencia para medir cuánto mejora la calibración.
+    uncalibrated = clone(forest).fit(X_train, y_train)
+    model = calibrate(forest, X_train, y_train)
     predictions = model.predict(X_test)
     metrics = {
         "model_version": MODEL_VERSION,
@@ -64,6 +68,12 @@ def main() -> None:
         "features": FEATURES,
         "labels": LABELS,
         "accuracy": round(float(accuracy_score(y_test, predictions)), 6),
+        "calibration": {
+            "method": CALIBRATION_METHOD,
+            "folds": CALIBRATION_FOLDS,
+            "uncalibrated": probability_quality(uncalibrated, X_test, y_test),
+            "calibrated": probability_quality(model, X_test, y_test),
+        },
         "classification_report": classification_report(y_test, predictions, labels=LABELS, output_dict=True, zero_division=0),
         "confusion_matrix_labels_order": LABELS,
         "scikit_learn_version": sklearn.__version__,
@@ -91,6 +101,7 @@ def main() -> None:
     print(f"Versión: {MODEL_VERSION}")
     print(f"Filas de entrenamiento: {len(X_train)} | Filas de prueba: {len(X_test)}")
     print(f"Accuracy sintético: {metrics['accuracy']:.4f}")
+    print(f"Calibración ({CALIBRATION_METHOD}): sin calibrar {metrics['calibration']['uncalibrated']} -> calibrado {metrics['calibration']['calibrated']}")
     report = classification_report(y_test, predictions, labels=LABELS, zero_division=0)
     print(report)
     print(f"Modelo guardado: {MODEL_PATH}")
