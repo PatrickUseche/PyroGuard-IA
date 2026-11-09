@@ -1,11 +1,13 @@
 import hmac
 import os
+import time
 from contextlib import asynccontextmanager
 from functools import lru_cache
 from fastapi import Depends, FastAPI, Header, HTTPException, status
 from app.errors import logger, register_error_handlers
+from app.metrics import metrics
 from app.predictor import RiskPredictor
-from app.schemas import HealthResponse, PredictionResponse, SensorReadingInput
+from app.schemas import HealthResponse, MetricsResponse, PredictionResponse, SensorReadingInput
 
 def is_production() -> bool:
     return os.getenv("APP_ENV", "").strip().lower() == "production"
@@ -76,8 +78,16 @@ def predict(reading: SensorReadingInput) -> dict:
     except (FileNotFoundError, ValueError) as exc:
         logger.error("No se pudo cargar el modelo: %s", exc)
         raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
+    started = time.perf_counter()
     try:
-        return predictor.predict(reading.model_dump())
+        result = predictor.predict(reading.model_dump())
+        metrics.record_prediction(result["risk_level"], time.perf_counter() - started)
+        return result
     except (ValueError, KeyError) as exc:
         logger.exception("Falló la predicción para el nodo %s", reading.node_id)
         raise HTTPException(status_code=500, detail="No se pudo calcular la predicción.") from exc
+
+
+@app.get("/metrics", response_model=MetricsResponse, tags=["health"], dependencies=[Depends(verify_api_key)])
+def service_metrics() -> dict:
+    return metrics.snapshot()

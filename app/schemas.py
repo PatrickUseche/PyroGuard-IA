@@ -65,3 +65,17 @@ class HealthResponse(BaseModel):
     model_loaded: bool
     model_version: str | None = None
     classes: list[str] = []
+
+
+class LatencyMetrics(BaseModel):
+    count: int
+    average: float
+    p95: float
+    max: float
+
+
+class MetricsResponse(BaseModel):
+    """Contadores en memoria del proceso; se reinician con cada arranque."""
+    predictions_total: int
+    predictions_by_risk_level: dict[str, int]
+    latency_ms: LatencyMetrics
