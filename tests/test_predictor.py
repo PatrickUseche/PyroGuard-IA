@@ -60,3 +60,31 @@ def test_model_prediction_equals_the_models_own_predict(predictor):
     )
     expected = list(predictor.model.predict(frame))
     assert [item["model_prediction"] for item in predictor.predict_many(READINGS)] == expected
+
+
+def build_artifact(tmp_path, **overrides):
+    import joblib
+
+    reference = joblib.load(RiskPredictor().model_path)
+    reference.update(overrides)
+    path = tmp_path / "modelo.joblib"
+    joblib.dump(reference, path)
+    return path
+
+
+def test_warns_when_scikit_learn_version_differs(tmp_path, caplog):
+    path = build_artifact(tmp_path, scikit_learn_version="0.0.1")
+    with caplog.at_level("WARNING", logger="pyroguard.api"):
+        RiskPredictor(path)
+    assert "0.0.1" in caplog.text
+
+
+def test_does_not_warn_when_scikit_learn_version_matches(caplog):
+    with caplog.at_level("WARNING", logger="pyroguard.api"):
+        RiskPredictor()
+    assert "scikit-learn" not in caplog.text
+
+
+def test_artifact_without_dataset_hash_loads_with_none(tmp_path):
+    path = build_artifact(tmp_path, dataset_sha256=None)
+    assert RiskPredictor(path).dataset_sha256 is None

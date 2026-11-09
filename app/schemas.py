@@ -64,6 +64,8 @@ class HealthResponse(BaseModel):
     status: Literal["ok", "degraded"]
     model_loaded: bool
     model_version: str | None = None
+    # SHA-256 del dataset con el que se entrenó el artefacto cargado (None si el artefacto es anterior a la v1.1).
+    dataset_sha256: str | None = None
     classes: list[str] = []
 
 
