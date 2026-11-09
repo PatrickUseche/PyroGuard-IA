@@ -35,7 +35,7 @@ Cabeceras:
 
 Cuerpo:
 
-| Campo | Tipo | Rango v1.0 | Obligatorio | Notas |
+| Campo | Tipo | Rango v1.0/v1.1 | Obligatorio | Notas |
 |---|---|---|---|---|
 | `node_id` | string | 1–50 caracteres | sí | Igual a `Node.node_id` |
 | `temperature` | number | −50 a 150 °C | sí | Igual a la validación del backend |
@@ -64,10 +64,10 @@ Ejemplo:
 ```json
 {
   "status": "ok",
-  "contract_version": "1.0",
+  "contract_version": "1.1",
   "node_id": "NODE-001",
   "timestamp": "2026-10-13T22:00:00-05:00",
-  "model_version": "pyroguard-rf-1.0.0",
+  "model_version": "pyroguard-rf-1.1.0",
   "model_prediction": "FIRE",
   "risk_level": "FIRE",
   "risk_probability": 1.0,
@@ -96,6 +96,9 @@ Semántica de los campos que consume el backend:
 | `contract_version` | Versión de este contrato | El cliente rechaza versiones mayores incompatibles (`2.x`) |
 
 Los umbrales de `evaluate_risk` (0.5 ⇒ WARNING, 0.85 + señal de sensor ⇒ FIRE) se aplican sobre `risk_probability`.
+
+Desde la v1.1 las probabilidades están **calibradas** (regresión isotónica, ver `models/modelo_riesgo.meta.json`): un
+`0.85` acierta cerca del 85 % de las veces en el conjunto de prueba sintético. Siguen sin ser una garantía sobre incendios reales.
 
 ## 4. Errores
 
@@ -165,7 +168,7 @@ lecturas válidas. Ejemplo: `metrics_response.json`.
 | Versión | Cambio |
 |---|---|
 | 1.0 | `POST /predict`, `GET /health`, errores uniformes |
-| 1.1 | Añade `POST /predict/batch` y `GET /metrics`; `contract_version` pasa a `1.1` |
+| 1.1 | Añade `POST /predict/batch` y `GET /metrics`, `dataset_sha256` en `/health`; `contract_version` pasa a `1.1`. El modelo pasa a `pyroguard-rf-1.1.0` con probabilidades calibradas; los campos y rangos de `/predict` no cambian |
 
 ## 6. Salud
 
@@ -177,7 +180,7 @@ El backend puede exponerlo de forma opcional para monitoreo; no se consulta en c
 
 Verificadas enviando a `/predict` lecturas que el backend acepta:
 
-| # | Caso | Backend | IA actual | Resolución en v1.0 |
+| # | Caso | Backend | IA actual | Resolución (v1.0) |
 |---|---|---|---|---|
 | 1 | `gas: null` | Válido (campo nullable) | 422 | IA acepta `null` ⇒ `0.0` |
 | 2 | `temperature: 120` o `-45` | Válido (−50..150) | 422 (−40..100) | IA amplía a −50..150 |

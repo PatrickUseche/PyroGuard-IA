@@ -63,7 +63,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 
 ## Fase 5 — Cierre
 
-- [ ] docs: revisar `docs/CONTRATO_IA_BACKEND.md` contra el código final [5.1]
+- [x] docs: revisar `docs/CONTRATO_IA_BACKEND.md` contra el código final [5.1]
 - [ ] docs: actualizar el README y `ENTREGA_AVANCE.md` [5.2]
 - [ ] chore(docker): usuario sin privilegios y `HEALTHCHECK` en el Dockerfile [5.3]
 - [ ] chore(deploy): desplegar en Render y publicar la URL del servicio [5.4] (la hace el dueño del repo; el backend la necesita en `AI_SERVICE_URL`)

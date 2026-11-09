@@ -109,3 +109,19 @@ def test_metrics_response_example_matches_schema():
 
     MetricsResponse.model_validate(example)
     assert sum(example["predictions_by_risk_level"].values()) == example["predictions_total"]
+
+
+CONTRACT_DOC = Path(__file__).resolve().parents[1] / "docs" / "CONTRATO_IA_BACKEND.md"
+
+
+def test_contract_document_matches_the_code():
+    from app.model_meta import load_meta
+    from app.schemas import CONTRACT_VERSION
+
+    text = CONTRACT_DOC.read_text(encoding="utf-8")
+    assert f"(v{CONTRACT_VERSION})" in text.splitlines()[0]
+    assert f'"contract_version": "{CONTRACT_VERSION}"' in text
+    assert f'"model_version": "{load_meta()["model_version"]}"' in text
+    assert f"| {CONTRACT_VERSION} |" in text  # historial de versiones
+    for endpoint in ("/predict", "/predict/batch", "/metrics", "/health"):
+        assert f"`{endpoint}`" in text or f"`POST {endpoint}`" in text or f"`GET {endpoint}`" in text
