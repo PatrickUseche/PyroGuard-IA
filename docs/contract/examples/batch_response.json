@@ -10,7 +10,7 @@
       "contract_version": "1.1",
       "node_id": "NODE-001",
       "timestamp": "2026-10-13T22:00:00-05:00",
-      "model_version": "pyroguard-rf-1.0.0",
+      "model_version": "pyroguard-rf-1.1.0",
       "model_prediction": "FIRE",
       "risk_level": "FIRE",
       "risk_probability": 1.0,
@@ -53,15 +53,15 @@
       "contract_version": "1.1",
       "node_id": "NODE-001",
       "timestamp": "2026-10-13T22:00:00Z",
-      "model_version": "pyroguard-rf-1.0.0",
+      "model_version": "pyroguard-rf-1.1.0",
       "model_prediction": "FIRE",
       "risk_level": "FIRE",
       "risk_probability": 1.0,
       "risk_probability_percent": 100.0,
       "probabilities": {
-        "FIRE": 0.991389,
+        "FIRE": 1.0,
         "NORMAL": 0.0,
-        "WARNING": 0.008611
+        "WARNING": 0.0
       },
       "safety_rules": {
         "rule": "FIRE_CORROBORATED",
