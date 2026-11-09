@@ -49,7 +49,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 - [x] test(data): pruebas del validador con casos válidos e inválidos [3.2]
 - [x] feat(scripts): script que importa lecturas del backend a un CSV listo para etiquetar [3.3]
 - [x] test(scripts): pruebas del importador con una respuesta simulada del backend [3.4]
-- [ ] test(ml): conjunto de prueba separado del entrenamiento, con comprobación de que no se solapan [3.5]
+- [x] test(ml): conjunto de prueba separado del entrenamiento, con comprobación de que no se solapan [3.5]
 - [ ] feat(ml): informe de métricas por clase (precisión, recall y F1) sobre ese conjunto [3.6]
 - [ ] test(ml): pruebas del informe de métricas [3.7]
 - [ ] docs: flujo de etiquetado y límites de los datos del simulador [3.8]
