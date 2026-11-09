@@ -52,7 +52,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 - [x] test(ml): conjunto de prueba separado del entrenamiento, con comprobación de que no se solapan [3.5]
 - [x] feat(ml): informe de métricas por clase (precisión, recall y F1) sobre ese conjunto [3.6]
 - [x] test(ml): pruebas del informe de métricas [3.7]
-- [ ] docs: flujo de etiquetado y límites de los datos del simulador [3.8]
+- [x] docs: flujo de etiquetado y límites de los datos del simulador [3.8]
 
 ## Fase 4 — Modelo sobre esos datos
 

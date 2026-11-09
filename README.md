@@ -115,6 +115,12 @@ Para probar casos prediseñados:
 python scripts/3_probar_predicciones.py
 ```
 
+## Etiquetado y métricas
+
+Para medir el modelo con lecturas del backend etiquetadas a mano: `scripts/4_importar_lecturas.py` exporta un CSV por
+etiquetar y `scripts/5_informe_metricas.py` calcula precisión, recall y F1 por clase. El flujo, el esquema del CSV y
+los límites de esos datos (vienen del simulador) están en [docs/ETIQUETADO.md](docs/ETIQUETADO.md).
+
 ## Variables de entorno
 
 Copia `.env.example` a `.env` si quieres documentar variables localmente (el código no carga `.env` automáticamente para la IA). Las variables deben definirse en el entorno del proceso o plataforma:
