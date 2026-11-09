@@ -1,10 +1,22 @@
 import hmac
 import os
+from contextlib import asynccontextmanager
 from functools import lru_cache
 from fastapi import Depends, FastAPI, Header, HTTPException, status
 from app.errors import logger, register_error_handlers
 from app.predictor import RiskPredictor
 from app.schemas import HealthResponse, PredictionResponse, SensorReadingInput
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Carga el modelo al arrancar para que la primera petición no pague ese tiempo (el backend espera pocos segundos).
+    # Si falla, el servicio arranca igual: /health queda en «degraded» y /predict responde 503.
+    try:
+        get_predictor()
+    except Exception as exc:
+        logger.error("No se pudo cargar el modelo al arrancar: %s", type(exc).__name__)
+    yield
+
 
 app = FastAPI(
     title="PyroGuard IA API",
@@ -13,6 +25,7 @@ app = FastAPI(
         "El modelo es Random Forest y el artefacto actual se entrenó con datos sintéticos."
     ),
     version="1.0.0",
+    lifespan=lifespan,
 )
 register_error_handlers(app)
 

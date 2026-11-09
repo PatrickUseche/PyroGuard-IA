@@ -9,27 +9,61 @@ Este repo es parte de un sistema de tres: **PyroGuard-Backend** (consume esta IA
 Estado de partida (2026-10-25): API `POST /predict` con contrato v1.0, modelo Random Forest entrenado con 2.400 registros
 sintéticos, reglas de seguridad RF08, CI y 44 pruebas en verde. Limitación declarada: el dataset es sintético.
 
-## Fase 1 — Datos reales
+Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecución. Cambios respecto a la versión anterior:
 
-- [ ] feat(data): definir el esquema de lecturas etiquetadas por una persona (`NORMAL`, `WARNING`, `FIRE`) [1.1]
-- [ ] feat(scripts): script que importa lecturas del backend a un CSV listo para etiquetar [1.2]
-- [ ] test(ml): conjunto de prueba separado y compuesto solo por datos reales [1.3]
-- [ ] feat(ml): informe de métricas por clase (precisión, recall y F1) sobre ese conjunto [1.4]
+- Cada task de API actualiza en su mismo commit el contrato y los ejemplos (el contrato lo exige); la Fase 5 solo revisa.
+- «Datos reales» son lecturas del simulador etiquetadas a mano; los informes lo declaran (`dataset_type: simulated`).
+- Comparar modelos y calibrar (Fase 4) van después de tener un conjunto de prueba separado (Fase 3): el dataset
+  sintético es casi separable y sus métricas no demuestran nada por sí solas.
+- Despliegue en Render (3.4 original, ahora 5.4); la rama de Hugging Face Spaces se descarta.
 
-## Fase 2 — Modelo
+## Fase 0 — Base
 
-- [ ] feat(ml): calibrar las probabilidades del modelo [2.1]
-- [ ] test(ml): comparar Random Forest con otros modelos y documentar el resultado [2.2]
-- [ ] test(api): pruebas de regresión con escenarios `normal`, `warning` y `fire` para detectar cambios de comportamiento [2.3]
-- [ ] chore(model): versionado del modelo junto con el dataset que lo entrenó [2.4]
+- [x] test(safety): pruebas parametrizadas de cada umbral de las reglas de seguridad [0.1]
+- [x] feat(api): cargar el modelo al arrancar el servicio en vez de en la primera petición [0.2]
+- [x] refactor(predictor): quitar el reparseo de `timestamp`, que Pydantic ya convierte [0.3]
 
-## Fase 3 — Servicio
+## Fase 1 — Servicio
 
-- [ ] feat(security): exigir `AI_API_KEY` cuando el servicio corre en producción [3.1]
-- [ ] feat(api): `POST /predict/batch` para varias lecturas en una sola petición [3.2]
-- [ ] feat(api): métricas de latencia y conteo de predicciones por nivel de riesgo [3.3]
-- [ ] chore(deploy): desplegar en Render y publicar la URL del servicio [3.4] (la necesita el backend [5.1])
+- [ ] feat(security): con `APP_ENV=production` el servicio no arranca sin `AI_API_KEY` [1.1]
+- [ ] test(security): pruebas del arranque en producción con y sin clave [1.2]
+- [ ] chore(deploy): declarar `APP_ENV` y `AI_API_KEY` en `render.yaml` y reflejarlo en el contrato [1.3]
+- [ ] feat(api): contadores en memoria de latencia y de predicciones por nivel de riesgo [1.4]
+- [ ] feat(api): `GET /metrics`, protegido con la misma clave que `/predict` [1.5]
+- [ ] test(api): pruebas de `/metrics` y de que exige la clave [1.6]
+- [ ] feat(ml): `RiskPredictor.predict_many` vectorizado, con una sola llamada al modelo [1.7]
+- [ ] feat(api): `POST /predict/batch` con límite de tamaño y resultado por lectura [1.8]
+- [ ] test(api): pruebas de `/predict/batch` (errores parciales, límite y equivalencia con `/predict`) [1.9]
+- [ ] docs: contrato v1.1 con `/metrics`, `/predict/batch` y sus ejemplos ejecutables [1.10]
 
-## Fase 4 — Documentación
+## Fase 2 — Versionado y regresión del modelo
 
-- [ ] docs: actualizar `docs/CONTRATO_IA_BACKEND.md` con los cambios de las fases anteriores [4.1]
+- [ ] feat(model): el entrenamiento escribe `models/modelo_riesgo.meta.json` con versión, SHA-256 del dataset, filas y métricas [2.1]
+- [ ] feat(api): `/health` expone `dataset_sha256` y el predictor avisa si cambia la versión de scikit-learn [2.2]
+- [ ] test(model): el artefacto, el `meta.json` y el CSV son coherentes entre sí [2.3]
+- [ ] test(api): pruebas de regresión con escenarios `normal`, `warning` y `fire` para detectar cambios de comportamiento [2.4]
+
+## Fase 3 — Datos etiquetados (simulador)
+
+- [ ] feat(data): esquema y validador de lecturas etiquetadas por una persona (`NORMAL`, `WARNING`, `FIRE`) [3.1]
+- [ ] test(data): pruebas del validador con casos válidos e inválidos [3.2]
+- [ ] feat(scripts): script que importa lecturas del backend a un CSV listo para etiquetar [3.3]
+- [ ] test(scripts): pruebas del importador con una respuesta simulada del backend [3.4]
+- [ ] test(ml): conjunto de prueba separado del entrenamiento, con comprobación de que no se solapan [3.5]
+- [ ] feat(ml): informe de métricas por clase (precisión, recall y F1) sobre ese conjunto [3.6]
+- [ ] test(ml): pruebas del informe de métricas [3.7]
+- [ ] docs: flujo de etiquetado y límites de los datos del simulador [3.8]
+
+## Fase 4 — Modelo sobre esos datos
+
+- [ ] test(ml): comparar Random Forest con otros modelos usando validación cruzada y documentar el resultado [4.1]
+- [ ] feat(ml): calibrar las probabilidades del modelo [4.2]
+- [ ] test(ml): pruebas de la calibración (rango y suma de probabilidades) [4.3]
+- [ ] chore(model): reentrenar y regenerar el `meta.json` [4.4]
+
+## Fase 5 — Cierre
+
+- [ ] docs: revisar `docs/CONTRATO_IA_BACKEND.md` contra el código final [5.1]
+- [ ] docs: actualizar el README y `ENTREGA_AVANCE.md` [5.2]
+- [ ] chore(docker): usuario sin privilegios y `HEALTHCHECK` en el Dockerfile [5.3]
+- [ ] chore(deploy): desplegar en Render y publicar la URL del servicio [5.4] (la hace el dueño del repo; el backend la necesita en `AI_SERVICE_URL`)

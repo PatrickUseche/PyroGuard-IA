@@ -51,8 +51,6 @@ class RiskPredictor:
         risk_probability = min(1.0, max(0.0, probabilities["WARNING"] + probabilities["FIRE"]))
         safety = evaluate_safety_rules(row, probabilities, model_prediction)
         measured_at = reading.get("timestamp") or datetime.now(timezone.utc)
-        if isinstance(measured_at, str):
-            measured_at = datetime.fromisoformat(measured_at.replace("Z", "+00:00"))
         if measured_at.tzinfo is None:
             measured_at = measured_at.replace(tzinfo=timezone.utc)
 
