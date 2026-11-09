@@ -47,7 +47,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 
 - [x] feat(data): esquema y validador de lecturas etiquetadas por una persona (`NORMAL`, `WARNING`, `FIRE`) [3.1]
 - [x] test(data): pruebas del validador con casos válidos e inválidos [3.2]
-- [ ] feat(scripts): script que importa lecturas del backend a un CSV listo para etiquetar [3.3]
+- [x] feat(scripts): script que importa lecturas del backend a un CSV listo para etiquetar [3.3]
 - [ ] test(scripts): pruebas del importador con una respuesta simulada del backend [3.4]
 - [ ] test(ml): conjunto de prueba separado del entrenamiento, con comprobación de que no se solapan [3.5]
 - [ ] feat(ml): informe de métricas por clase (precisión, recall y F1) sobre ese conjunto [3.6]
