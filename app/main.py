@@ -7,8 +7,19 @@ from app.errors import logger, register_error_handlers
 from app.predictor import RiskPredictor
 from app.schemas import HealthResponse, PredictionResponse, SensorReadingInput
 
+def is_production() -> bool:
+    return os.getenv("APP_ENV", "").strip().lower() == "production"
+
+
+def ensure_api_key_in_production() -> None:
+    """En producción /predict no puede quedar abierto: sin AI_API_KEY el servicio no arranca."""
+    if is_production() and not os.getenv("AI_API_KEY", "").strip():
+        raise RuntimeError("APP_ENV=production exige definir AI_API_KEY; el servicio no arranca sin ella.")
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    ensure_api_key_in_production()
     # Carga el modelo al arrancar para que la primera petición no pague ese tiempo (el backend espera pocos segundos).
     # Si falla, el servicio arranca igual: /health queda en «degraded» y /predict responde 503.
     try:
@@ -37,7 +48,7 @@ def get_predictor() -> RiskPredictor:
 
 def verify_api_key(x_ai_api_key: str | None = Header(default=None, alias="X-AI-API-Key")) -> None:
     expected = os.getenv("AI_API_KEY", "").strip()
-    # Sin clave configurada, se permite uso local; en despliegue público se recomienda definirla.
+    # Sin clave configurada se permite el uso local; con APP_ENV=production el servicio ni siquiera arranca así.
     if not expected:
         return
     if not x_ai_api_key or not hmac.compare_digest(x_ai_api_key, expected):
