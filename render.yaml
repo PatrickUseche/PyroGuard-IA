@@ -8,4 +8,9 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
-      # Configura AI_API_KEY desde el panel de Render para restringir /predict.
+      # Con APP_ENV=production el servicio no arranca sin AI_API_KEY (evita dejar /predict abierto).
+      - key: APP_ENV
+        value: production
+      # Se rellena a mano en el panel de Render; debe ser igual a la AI_API_KEY del backend.
+      - key: AI_API_KEY
+        sync: false

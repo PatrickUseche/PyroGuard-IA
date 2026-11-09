@@ -126,7 +126,8 @@ de error nunca incluyen el valor recibido ni detalles internos de la excepción.
 
 | Variable | Servicio | Ejemplo | Descripción |
 |---|---|---|---|
-| `AI_API_KEY` | IA y backend | `cambia-esta-clave` | Vacía en IA ⇒ endpoint abierto (solo desarrollo local) |
+| `AI_API_KEY` | IA y backend | `cambia-esta-clave` | Vacía en IA ⇒ endpoint abierto (solo desarrollo local); con `APP_ENV=production` la IA no arranca sin ella |
+| `APP_ENV` | IA | `production` | Con el valor `production` (sin distinguir mayúsculas) la clave pasa a ser obligatoria al arrancar |
 | `AI_SERVICE_URL` | backend | `http://127.0.0.1:8001` | Vacía ⇒ IA deshabilitada (`ai_status=DISABLED`) |
 | `AI_CONNECT_TIMEOUT` | backend | `3.0` | Segundos máximos para establecer la conexión; detecta rápido un servicio caído |
 | `AI_READ_TIMEOUT` | backend | `10.0` | Segundos máximos de espera de la respuesta de inferencia una vez conectado |

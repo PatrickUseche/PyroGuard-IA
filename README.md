@@ -119,7 +119,8 @@ python scripts/3_probar_predicciones.py
 
 Copia `.env.example` a `.env` si quieres documentar variables localmente (el código no carga `.env` automáticamente para la IA). Las variables deben definirse en el entorno del proceso o plataforma:
 
-- `AI_API_KEY`: opcional. Si se configura, `POST /predict` requiere el header `X-AI-API-Key` con la misma clave.
+- `AI_API_KEY`: opcional en local. Si se configura, `POST /predict` requiere el header `X-AI-API-Key` con la misma clave.
+- `APP_ENV`: con `production` el servicio **no arranca** si falta `AI_API_KEY`. El `render.yaml` ya la define así.
 
 La versión que devuelve la API se lee de los metadatos guardados dentro del artefacto entrenado, para conservar la trazabilidad del modelo.
 
