@@ -34,17 +34,36 @@ class RiskPredictor:
     def classes(self) -> list[str]:
         return [str(item) for item in self.model.classes_]
 
-    def predict(self, reading: dict[str, Any]) -> dict[str, Any]:
-        row = {
+    @staticmethod
+    def _feature_row(reading: dict[str, Any]) -> dict[str, float]:
+        return {
             "temperature": float(reading["temperature"]),
             "humidity": float(reading["humidity"]),
             "smoke": float(reading["smoke"]),
             "gas": float(reading.get("gas", 0.0) or 0.0),
             "flame": int(bool(reading["flame"])),
         }
-        frame = pd.DataFrame([row], columns=self.feature_columns)
-        model_prediction = str(self.model.predict(frame)[0])
-        raw_probabilities = self.model.predict_proba(frame)[0]
+
+    def predict(self, reading: dict[str, Any]) -> dict[str, Any]:
+        return self.predict_many([reading])[0]
+
+    def predict_many(self, readings: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Clasifica varias lecturas con una sola llamada al modelo; mantiene el orden de entrada."""
+        if not readings:
+            return []
+        rows = [self._feature_row(reading) for reading in readings]
+        frame = pd.DataFrame(rows, columns=self.feature_columns)
+        # La clase es el argmax de las probabilidades (lo que hace RandomForest.predict): una sola pasada por el bosque.
+        raw_probabilities = self.model.predict_proba(frame)
+        model_predictions = self.model.classes_[raw_probabilities.argmax(axis=1)]
+        return [
+            self._build_result(reading, row, str(prediction), probabilities)
+            for reading, row, prediction, probabilities in zip(readings, rows, model_predictions, raw_probabilities)
+        ]
+
+    def _build_result(
+        self, reading: dict[str, Any], row: dict[str, float], model_prediction: str, raw_probabilities: Any
+    ) -> dict[str, Any]:
         probabilities = {str(label): round(float(prob), 6) for label, prob in zip(self.model.classes_, raw_probabilities)}
         for label in ("NORMAL", "WARNING", "FIRE"):
             probabilities.setdefault(label, 0.0)
