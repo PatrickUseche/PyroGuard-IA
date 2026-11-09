@@ -9,3 +9,6 @@ __pycache__/
 # Los reportes de evaluación pueden regenerarse.
 reports/*.json
 reports/*.csv
+
+# Lecturas importadas del backend pendientes de etiquetar (las etiquetadas sí se versionan).
+data/por_etiquetar*.csv

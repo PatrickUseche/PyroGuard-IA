@@ -45,14 +45,14 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 
 ## Fase 3 — Datos etiquetados (simulador)
 
-- [ ] feat(data): esquema y validador de lecturas etiquetadas por una persona (`NORMAL`, `WARNING`, `FIRE`) [3.1]
-- [ ] test(data): pruebas del validador con casos válidos e inválidos [3.2]
-- [ ] feat(scripts): script que importa lecturas del backend a un CSV listo para etiquetar [3.3]
-- [ ] test(scripts): pruebas del importador con una respuesta simulada del backend [3.4]
-- [ ] test(ml): conjunto de prueba separado del entrenamiento, con comprobación de que no se solapan [3.5]
-- [ ] feat(ml): informe de métricas por clase (precisión, recall y F1) sobre ese conjunto [3.6]
-- [ ] test(ml): pruebas del informe de métricas [3.7]
-- [ ] docs: flujo de etiquetado y límites de los datos del simulador [3.8]
+- [x] feat(data): esquema y validador de lecturas etiquetadas por una persona (`NORMAL`, `WARNING`, `FIRE`) [3.1]
+- [x] test(data): pruebas del validador con casos válidos e inválidos [3.2]
+- [x] feat(scripts): script que importa lecturas del backend a un CSV listo para etiquetar [3.3]
+- [x] test(scripts): pruebas del importador con una respuesta simulada del backend [3.4]
+- [x] test(ml): conjunto de prueba separado del entrenamiento, con comprobación de que no se solapan [3.5]
+- [x] feat(ml): informe de métricas por clase (precisión, recall y F1) sobre ese conjunto [3.6]
+- [x] test(ml): pruebas del informe de métricas [3.7]
+- [x] docs: flujo de etiquetado y límites de los datos del simulador [3.8]
 
 ## Fase 4 — Modelo sobre esos datos
 
