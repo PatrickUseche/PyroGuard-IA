@@ -35,7 +35,7 @@ def test_prediction_contract_and_probabilities():
     assert 0 <= body["risk_probability"] <= 1
     assert set(body["probabilities"]) == {"NORMAL", "WARNING", "FIRE"}
     assert body["model_version"]
-    assert body["contract_version"] == "1.0"
+    assert body["contract_version"] == "1.1"
 
 
 def test_gas_is_optional():

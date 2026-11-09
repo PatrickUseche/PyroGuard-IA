@@ -1,4 +1,4 @@
-"""Verifica docs/contract/examples contra la API real (contrato IA-Backend v1.0)."""
+"""Verifica docs/contract/examples contra la API real (contrato IA-Backend v1.1)."""
 import json
 import math
 from pathlib import Path
@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 from app import main
 from app.main import app
-from app.schemas import PredictionResponse
+from app.schemas import BatchResponse, MetricsResponse, PredictionResponse
 
 EXAMPLES_DIR = Path(__file__).resolve().parents[1] / "docs" / "contract" / "examples"
 RISK_LEVELS = {"NORMAL", "WARNING", "FIRE"}
@@ -85,3 +85,27 @@ def test_model_unavailable_error_example_is_current(monkeypatch):
 
     assert response.status_code == 503
     assert response.json() == load_example("error_model_unavailable.json")
+
+
+def test_batch_request_example_is_accepted_and_response_is_current():
+    response = client.post("/predict/batch", json=load_example("batch_request.json"))
+
+    assert response.status_code == 200, response.text
+    assert response.json() == load_example("batch_response.json")
+
+
+def test_batch_response_example_matches_schema_and_mixes_results():
+    example = load_example("batch_response.json")
+
+    BatchResponse.model_validate(example)
+    assert example["contract_version"].split(".")[0] == "1"
+    assert [item["status"] for item in example["results"]] == ["ok", "error", "ok"]
+    assert example["results"][1]["index"] == 1
+    assert_backend_can_consume(example["results"][0])
+
+
+def test_metrics_response_example_matches_schema():
+    example = load_example("metrics_response.json")
+
+    MetricsResponse.model_validate(example)
+    assert sum(example["predictions_by_risk_level"].values()) == example["predictions_total"]

@@ -1,0 +1,84 @@
+{
+  "status": "ok",
+  "contract_version": "1.1",
+  "count": 3,
+  "succeeded": 2,
+  "failed": 1,
+  "results": [
+    {
+      "status": "ok",
+      "contract_version": "1.1",
+      "node_id": "NODE-001",
+      "timestamp": "2026-10-13T22:00:00-05:00",
+      "model_version": "pyroguard-rf-1.0.0",
+      "model_prediction": "FIRE",
+      "risk_level": "FIRE",
+      "risk_probability": 1.0,
+      "risk_probability_percent": 100.0,
+      "probabilities": {
+        "FIRE": 1.0,
+        "NORMAL": 0.0,
+        "WARNING": 0.0
+      },
+      "safety_rules": {
+        "rule": "FIRE_CORROBORATED",
+        "explanation": "Se detectaron varias señales concordantes de alto riesgo. Verificar la condición del entorno.",
+        "fire_confirmations": [
+          "sensor de llama activo junto con humo >= 80",
+          "sensor de llama activo junto con temperatura >= 35 °C",
+          "sensor de llama activo junto con gas >= 40"
+        ],
+        "warning_signals": [
+          "temperatura >= 30 °C",
+          "humedad <= 35 %",
+          "humo >= 50",
+          "gas >= 30",
+          "sensor de llama activo"
+        ]
+      },
+      "synthetic_model": true,
+      "disclaimer": "Prototipo académico entrenado con datos sintéticos. Las salidas no son una detección certificada de incendios reales y requieren validación con datos de sensores reales y pruebas supervisadas."
+    },
+    {
+      "status": "error",
+      "index": 1,
+      "errors": {
+        "temperature": [
+          "Input should be less than or equal to 150"
+        ]
+      }
+    },
+    {
+      "status": "ok",
+      "contract_version": "1.1",
+      "node_id": "NODE-001",
+      "timestamp": "2026-10-13T22:00:00Z",
+      "model_version": "pyroguard-rf-1.0.0",
+      "model_prediction": "FIRE",
+      "risk_level": "FIRE",
+      "risk_probability": 1.0,
+      "risk_probability_percent": 100.0,
+      "probabilities": {
+        "FIRE": 0.991389,
+        "NORMAL": 0.0,
+        "WARNING": 0.008611
+      },
+      "safety_rules": {
+        "rule": "FIRE_CORROBORATED",
+        "explanation": "Se detectaron varias señales concordantes de alto riesgo. Verificar la condición del entorno.",
+        "fire_confirmations": [
+          "temperatura >= 42 °C",
+          "humo >= 180",
+          "humedad <= 15 %"
+        ],
+        "warning_signals": [
+          "temperatura >= 30 °C",
+          "humedad <= 35 %",
+          "humo >= 50"
+        ]
+      },
+      "synthetic_model": true,
+      "disclaimer": "Prototipo académico entrenado con datos sintéticos. Las salidas no son una detección certificada de incendios reales y requieren validación con datos de sensores reales y pruebas supervisadas."
+    }
+  ]
+}

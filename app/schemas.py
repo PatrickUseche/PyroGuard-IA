@@ -4,11 +4,11 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 RiskLevel = Literal["NORMAL", "WARNING", "FIRE"]
 # Versión de docs/CONTRATO_IA_BACKEND.md; subirla al cambiar campos, rangos o errores.
-CONTRACT_VERSION = "1.0"
+CONTRACT_VERSION = "1.1"
 
 
 class SensorReadingInput(BaseModel):
-    """Entrada alineada con la validación de PyroGuard-Backend (contrato v1.0)."""
+    """Entrada alineada con la validación de PyroGuard-Backend (contrato v1.1)."""
     model_config = ConfigDict(extra="ignore", allow_inf_nan=False)
 
     node_id: str = Field(..., min_length=1, max_length=50, description="Identificador del nodo ESP32")

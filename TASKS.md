@@ -34,7 +34,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 - [x] feat(ml): `RiskPredictor.predict_many` vectorizado, con una sola llamada al modelo [1.7]
 - [x] feat(api): `POST /predict/batch` con límite de tamaño y resultado por lectura [1.8]
 - [x] test(api): pruebas de `/predict/batch` (errores parciales, límite y equivalencia con `/predict`) [1.9]
-- [ ] docs: contrato v1.1 con `/metrics`, `/predict/batch` y sus ejemplos ejecutables [1.10]
+- [x] docs: contrato v1.1 con `/metrics`, `/predict/batch` y sus ejemplos ejecutables [1.10]
 
 ## Fase 2 — Versionado y regresión del modelo
 

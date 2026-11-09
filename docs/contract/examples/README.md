@@ -1,4 +1,4 @@
-# Ejemplos del contrato IA-Backend v1.0
+# Ejemplos del contrato IA-Backend v1.1
 
 Ejemplos ejecutables de `docs/CONTRATO_IA_BACKEND.md`. Ambos repositorios los usan en sus pruebas:
 
@@ -21,3 +21,8 @@ Las dos carpetas deben tener **el mismo contenido**. Al cambiar el contrato:
 | `error_validation.json` | 422 `VALIDATION_ERROR` |
 | `error_unauthorized.json` | 401 `UNAUTHORIZED` |
 | `error_model_unavailable.json` | 503 `MODEL_UNAVAILABLE` |
+| `batch_request.json` | Petición a `/predict/batch` con una lectura de incendio, una inválida y una con valores límite |
+| `batch_response.json` | Respuesta real de `/predict/batch` para esa petición (la lectura inválida queda como error con su posición) |
+| `metrics_response.json` | Ejemplo de `/metrics` (los valores de latencia varían; las pruebas solo validan el esquema) |
+
+Los archivos `batch_*` y `metrics_*` no empiezan por `request_`, así que no se mezclan con los ejemplos de `/predict`.
