@@ -117,3 +117,21 @@ def test_artifact_with_unexpected_classes_is_rejected(tmp_path):
     path = _write_artifact(tmp_path / "clases.joblib", {"model": model})
     with pytest.raises(ValueError, match="Clases inesperadas"):
         RiskPredictor(path)
+
+
+def test_warns_when_the_model_was_trained_with_another_sklearn(tmp_path, predictor, caplog):
+    artifact = {"model": predictor.model, "scikit_learn_version": "0.0.1"}
+    path = _write_artifact(tmp_path / "otra_version.joblib", artifact)
+    with caplog.at_level("WARNING", logger="pyroguard.api"):
+        RiskPredictor(path)
+    assert "0.0.1" in caplog.text
+
+
+def test_no_warning_when_sklearn_version_matches(tmp_path, predictor, caplog):
+    import sklearn
+
+    artifact = {"model": predictor.model, "scikit_learn_version": sklearn.__version__}
+    path = _write_artifact(tmp_path / "misma_version.joblib", artifact)
+    with caplog.at_level("WARNING", logger="pyroguard.api"):
+        RiskPredictor(path)
+    assert "reentrena" not in caplog.text
