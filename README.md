@@ -1,5 +1,7 @@
 # PyroGuard-IA — Servicio de Machine Learning
 
+[![Tests](https://github.com/PatrickUseche/PyroGuard-IA/actions/workflows/tests.yml/badge.svg)](https://github.com/PatrickUseche/PyroGuard-IA/actions/workflows/tests.yml)
+
 Servicio de inferencia de IA para **PyroGuard / Forest Guardian**. Implementa un clasificador **Random Forest** entrenado localmente con un dataset sintético y lo expone mediante una API REST propia con FastAPI.
 
 > **Alcance real:** es un prototipo académico reproducible. El dataset es sintético; no se debe presentar el modelo como detector certificado de incendios reales ni usarlo como único mecanismo de seguridad.
