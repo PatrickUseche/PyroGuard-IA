@@ -126,6 +126,19 @@ Para medir el modelo con lecturas del backend etiquetadas a mano: `scripts/4_imp
 etiquetar y `scripts/5_informe_metricas.py` calcula precisión, recall y F1 por clase. El flujo, el esquema del CSV y
 los límites de esos datos (vienen del simulador) están en [docs/ETIQUETADO.md](docs/ETIQUETADO.md).
 
+## Calidad
+
+```bash
+pip install -r requirements-dev.txt
+ruff check .
+python -m coverage run -m pytest -q
+python -m coverage report
+```
+
+`ruff.toml` define las reglas (pycodestyle, pyflakes, orden de imports, bugbear, pyupgrade y simplificaciones) y
+`.coveragerc` mide `app/` y `scripts/` con ramas. GitHub Actions ejecuta los tres pasos en Python 3.12 y 3.14 y
+publica el resumen de cobertura en el job.
+
 ## Variables de entorno
 
 Copia `.env.example` a `.env` si quieres documentar variables localmente (el código no carga `.env` automáticamente para la IA). Las variables deben definirse en el entorno del proceso o plataforma:
