@@ -77,7 +77,7 @@ del despliegue.
 - [x] docs(deploy): URL de producción de Vercel en el README y en el contrato [6.1]
 - [x] docs(entrega): `ENTREGA_AVANCE.md` con el despliegue y cómo verificarlo [6.2]
 - [x] fix(api): versión de la app FastAPI (OpenAPI) alineada con la del servicio `1.1.0` [6.3]
-- [ ] test(api): la versión de OpenAPI coincide con `SERVICE_VERSION` [6.4]
+- [x] test(api): la versión de OpenAPI coincide con `SERVICE_VERSION` [6.4]
 - [ ] feat(api): `GET /` enumera también `/predict/batch` y `/metrics` [6.5]
 - [ ] test(api): prueba de `GET /` [6.6]
 - [ ] refactor(api): una sola función que carga el predictor o responde 503 [6.7]

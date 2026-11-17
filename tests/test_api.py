@@ -133,3 +133,13 @@ def test_health_has_no_dataset_hash_when_the_model_is_unavailable(monkeypatch):
     body = client.get("/health").json()
     assert body["status"] == "degraded"
     assert body["dataset_sha256"] is None
+
+
+def test_openapi_version_matches_service_version():
+    from app import main
+    from app.schemas import CONTRACT_VERSION
+
+    schema = client.get("/openapi.json").json()
+    assert schema["info"]["version"] == main.SERVICE_VERSION
+    # La versión del servicio empieza por la del contrato (1.1 -> 1.1.x).
+    assert main.SERVICE_VERSION.startswith(CONTRACT_VERSION + ".")
