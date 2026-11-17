@@ -96,7 +96,7 @@ del despliegue.
 - [x] style: unir los `with` anidados (ruff SIM117) [6.20]
 - [x] style: líneas largas e import fuera de lugar (ruff E501, E402) [6.21]
 - [x] chore(ci): paso de ruff en GitHub Actions [6.22]
-- [ ] chore(ci): medir la cobertura con coverage.py [6.23]
+- [x] chore(ci): medir la cobertura con coverage.py [6.23]
 - [ ] chore(ci): resumen de cobertura en el job [6.24]
 - [ ] chore(git): ignorar `.coverage` y `htmlcov/` [6.25]
 - [ ] test(deploy): `vercel.json` incluye el modelo y excluye lo que no hace falta en ejecución [6.26]

@@ -43,4 +43,4 @@ jobs:
         run: ruff check .
 
       - name: Ejecutar pruebas
-        run: python -m pytest -q
+        run: python -m coverage run -m pytest -q

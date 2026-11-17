@@ -1,0 +1,8 @@
+# Cobertura de las pruebas: `coverage run -m pytest` y `coverage report`.
+[run]
+source = app, scripts
+branch = True
+
+[report]
+show_missing = True
+skip_covered = False
