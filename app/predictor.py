@@ -77,7 +77,9 @@ class RiskPredictor:
     def _build_result(
         self, reading: dict[str, Any], row: dict[str, float], model_prediction: str, raw_probabilities: Any
     ) -> dict[str, Any]:
-        probabilities = {str(label): round(float(prob), 6) for label, prob in zip(self.model.classes_, raw_probabilities, strict=True)}
+        probabilities = {
+            str(label): round(float(prob), 6) for label, prob in zip(self.model.classes_, raw_probabilities, strict=True)
+        }
         for label in ("NORMAL", "WARNING", "FIRE"):
             probabilities.setdefault(label, 0.0)
         risk_probability = min(1.0, max(0.0, probabilities["WARNING"] + probabilities["FIRE"]))

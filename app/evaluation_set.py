@@ -37,7 +37,8 @@ def ensure_valid_evaluation_set(evaluation: pd.DataFrame, training: pd.DataFrame
     synthetic = evaluation["node_id"].astype(str).str.startswith(SYNTHETIC_NODE_PREFIX)
     if synthetic.any():
         raise EvaluationSetError(
-            f"{int(synthetic.sum())} fila(s) son sintéticas (node_id «{SYNTHETIC_NODE_PREFIX}…»): no sirven como conjunto de prueba."
+            f"{int(synthetic.sum())} fila(s) son sintéticas (node_id «{SYNTHETIC_NODE_PREFIX}…»): "
+            "no sirven como conjunto de prueba."
         )
     if training is not None:
         overlap = find_overlap(evaluation, training)

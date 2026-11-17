@@ -109,7 +109,9 @@ def main() -> None:
     print(f"Versión: {MODEL_VERSION}")
     print(f"Filas de entrenamiento: {len(X_train)} | Filas de prueba: {len(X_test)}")
     print(f"Accuracy sintético: {metrics['accuracy']:.4f}")
-    print(f"Calibración ({CALIBRATION_METHOD}): sin calibrar {metrics['calibration']['uncalibrated']} -> calibrado {metrics['calibration']['calibrated']}")
+    calibration = metrics["calibration"]
+    print(f"Calibración ({CALIBRATION_METHOD}):")
+    print(f"  sin calibrar {calibration['uncalibrated']} -> calibrado {calibration['calibrated']}")
     report = classification_report(y_test, predictions, labels=LABELS, zero_division=0)
     print(report)
     print(f"Modelo guardado: {MODEL_PATH}")

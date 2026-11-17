@@ -21,7 +21,9 @@ DEFAULT_OUT = ROOT / "reports" / "evaluation_labeled.json"
 def format_table(title: str, metrics: dict) -> str:
     lines = [title, f"{'clase':10} {'precisión':>10} {'recall':>8} {'F1':>8} {'n':>6}"]
     for label, values in metrics["per_class"].items():
-        lines.append(f"{label:10} {values['precision']:>10.3f} {values['recall']:>8.3f} {values['f1']:>8.3f} {values['support']:>6}")
+        lines.append(
+            f"{label:10} {values['precision']:>10.3f} {values['recall']:>8.3f} {values['f1']:>8.3f} {values['support']:>6}"
+        )
     macro = metrics["macro_avg"]
     lines.append(f"{'macro':10} {macro['precision']:>10.3f} {macro['recall']:>8.3f} {macro['f1']:>8.3f}")
     lines.append(f"exactitud global: {metrics['accuracy']:.3f}")
