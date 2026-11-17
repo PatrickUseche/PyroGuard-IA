@@ -82,7 +82,7 @@ del despliegue.
 - [x] test(api): prueba de `GET /` [6.6]
 - [x] refactor(api): una sola función que carga el predictor o responde 503 [6.7]
 - [x] test(api): `/predict/batch` responde 500 si el modelo falla al clasificar el lote [6.8]
-- [ ] test(predictor): artefacto sin metadatos, con columnas o con clases incompatibles [6.9]
+- [x] test(predictor): artefacto sin metadatos, con columnas o con clases incompatibles [6.9]
 - [ ] test(predictor): aviso cuando cambia la versión de scikit-learn [6.10]
 - [ ] test(predictor): un `timestamp` sin zona horaria se interpreta como UTC [6.11]
 - [ ] test(data): el generador reproduce el CSV versionado (mismo SHA-256 que `meta.json`) [6.12]
