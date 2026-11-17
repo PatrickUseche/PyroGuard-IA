@@ -66,7 +66,7 @@ Revisión del plan (2026-11-09): las fases están ordenadas por orden de ejecuci
 - [x] docs: revisar `docs/CONTRATO_IA_BACKEND.md` contra el código final [5.1]
 - [x] docs: actualizar el README y `ENTREGA_AVANCE.md` [5.2]
 - [x] chore(docker): usuario sin privilegios y `HEALTHCHECK` en el Dockerfile [5.3]
-- [ ] chore(deploy): desplegar en Render y publicar la URL del servicio [5.4] (la hace el dueño del repo; el backend la necesita en `AI_SERVICE_URL`)
+- [x] chore(deploy): desplegar y publicar la URL del servicio [5.4] (desplegado en Vercel: `https://pyro-guard-ia.vercel.app`; Render quedó como alternativa documentada)
 
 ## Fase 6 — Entrega
 
