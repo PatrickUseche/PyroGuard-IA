@@ -163,7 +163,11 @@ Angular Dashboard
 
 ## Despliegue
 
-### Render
+**Producción:** el servicio está desplegado en Vercel en `https://pyro-guard-ia.vercel.app`
+(`/health` es público; `/predict`, `/predict/batch` y `/metrics` exigen `X-AI-API-Key`). El backend lo usa con
+`AI_SERVICE_URL=https://pyro-guard-ia.vercel.app`.
+
+### Render (alternativa)
 
 1. Crea un Web Service apuntando al repositorio `PyroGuard-IA`.
 2. Usa `render.yaml` (o define Build Command `pip install -r requirements.txt`, Start Command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, Health Check Path `/health`).
@@ -173,7 +177,7 @@ Angular Dashboard
 
 No escribas el dominio de ejemplo como si fuera real: usa la URL que la plataforma genere al desplegar.
 
-### Vercel (gratis, sin tarjeta)
+### Vercel (gratis, sin tarjeta; es el despliegue actual)
 
 `vercel.json` incluye el modelo (`models/**`) en la función y excluye lo que no hace falta en ejecución. Vercel detecta `app/main.py` como entrada de FastAPI.
 

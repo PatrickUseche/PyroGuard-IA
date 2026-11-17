@@ -6,6 +6,15 @@ cualquier cambio de campos, rangos o códigos de error debe reflejarse aquí y s
 
 Los ejemplos ejecutables de `docs/contract/examples/` se verifican en las pruebas de ambos repositorios.
 
+## Entornos
+
+| Entorno | `AI_SERVICE_URL` del backend |
+|---|---|
+| Local | `http://127.0.0.1:8001` |
+| Producción (Vercel) | `https://pyro-guard-ia.vercel.app` |
+
+La URL va sin barra final; el backend añade `/predict` y `/health`.
+
 ## 1. Flujo
 
 ```

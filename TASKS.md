@@ -74,7 +74,7 @@ Revisión del 2026-11-17: la IA quedó desplegada en Vercel (`https://pyro-guard
 deja el repo listo para entregar: URL publicada, lint y cobertura en CI, pruebas de los scripts que no tenían y un verificador
 del despliegue.
 
-- [ ] docs(deploy): URL de producción de Vercel en el README y en el contrato [6.1]
+- [x] docs(deploy): URL de producción de Vercel en el README y en el contrato [6.1]
 - [ ] docs(entrega): `ENTREGA_AVANCE.md` con el despliegue y cómo verificarlo [6.2]
 - [ ] fix(api): versión de la app FastAPI (OpenAPI) alineada con la del servicio `1.1.0` [6.3]
 - [ ] test(api): la versión de OpenAPI coincide con `SERVICE_VERSION` [6.4]
