@@ -117,4 +117,4 @@ del despliegue.
 
 - [x] test(predictor): con lecturas aleatorias dentro del contrato, las probabilidades suman 1 y el riesgo es coherente [6.39]
 - [x] docs(readme): sección de calidad con los comandos de ruff y coverage [6.40]
-- [ ] docs(contract): cómo verificar el contrato contra el servicio desplegado [6.41]
+- [x] docs(contract): cómo verificar el contrato contra el servicio desplegado [6.41]

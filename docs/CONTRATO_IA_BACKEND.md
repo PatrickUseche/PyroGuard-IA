@@ -185,6 +185,19 @@ lecturas válidas. Ejemplo: `metrics_response.json`.
 `dataset_sha256` (añadido en 1.1) identifica el dataset con el que se entrenó el modelo cargado y coincide con `models/modelo_riesgo.meta.json`.
 El backend puede exponerlo de forma opcional para monitoreo; no se consulta en cada lectura.
 
+## 6.1 Verificar el contrato en un despliegue
+
+Las pruebas de ambos repositorios usan los ejemplos de `docs/contract/examples/`, pero no tocan el servicio real.
+Para comprobar el contrato contra lo desplegado:
+
+| Lado | Comando | Qué comprueba |
+|---|---|---|
+| IA | `python scripts/7_verificar_despliegue.py --url https://pyro-guard-ia.vercel.app --key "$AI_API_KEY"` | `/health` con el modelo cargado y `/predict` con `contract_version` vigente |
+| Backend | `python manage.py check_ai` (con las variables del entorno del backend) | Que el backend llega a la IA con su `AI_SERVICE_URL` y que la `AI_API_KEY` coincide |
+
+Si el backend muestra `ai: unavailable` en `/api/health/`, su campo `reason` (`timeout`, `connection_error`,
+`http_<código>`) indica qué revisar.
+
 ## 7. Brechas detectadas en la revisión (2026-10-22) y resolución
 
 Verificadas enviando a `/predict` lecturas que el backend acepta:
