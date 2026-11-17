@@ -75,7 +75,7 @@ deja el repo listo para entregar: URL publicada, lint y cobertura en CI, pruebas
 del despliegue.
 
 - [x] docs(deploy): URL de producción de Vercel en el README y en el contrato [6.1]
-- [ ] docs(entrega): `ENTREGA_AVANCE.md` con el despliegue y cómo verificarlo [6.2]
+- [x] docs(entrega): `ENTREGA_AVANCE.md` con el despliegue y cómo verificarlo [6.2]
 - [ ] fix(api): versión de la app FastAPI (OpenAPI) alineada con la del servicio `1.1.0` [6.3]
 - [ ] test(api): la versión de OpenAPI coincide con `SERVICE_VERSION` [6.4]
 - [ ] feat(api): `GET /` enumera también `/predict/batch` y `/metrics` [6.5]
