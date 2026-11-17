@@ -70,7 +70,15 @@ def verify_api_key(x_ai_api_key: str | None = Header(default=None, alias="X-AI-A
 
 @app.get("/", tags=["health"])
 def root() -> dict:
-    return {"service": "PyroGuard IA API", "docs": "/docs", "health": "/health", "prediction": "POST /predict"}
+    return {
+        "service": "PyroGuard IA API",
+        "version": SERVICE_VERSION,
+        "docs": "/docs",
+        "health": "/health",
+        "prediction": "POST /predict",
+        "batch_prediction": "POST /predict/batch",
+        "metrics": "/metrics",
+    }
 
 
 @app.get("/health", response_model=HealthResponse, tags=["health"])
