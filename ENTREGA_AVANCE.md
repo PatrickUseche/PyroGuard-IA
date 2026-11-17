@@ -29,7 +29,7 @@
 
 ## Calidad (Fase 6)
 
-- 264 pruebas automáticas en verde y 92 % de cobertura de líneas y ramas (`coverage run -m pytest` y `coverage report`).
+- 267 pruebas automáticas en verde y 92 % de cobertura de líneas y ramas (`coverage run -m pytest` y `coverage report`).
 - `ruff check .` sin avisos; el CI ejecuta lint, pruebas y cobertura en Python 3.12 y 3.14.
 - El generador reproduce exactamente el dataset versionado (mismo SHA-256 que `models/modelo_riesgo.meta.json`).
 - `scripts/7_verificar_despliegue.py` comprueba el servicio desplegado.
