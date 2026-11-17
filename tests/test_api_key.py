@@ -34,3 +34,9 @@ def test_protected_routes_reject_a_wrong_key(configured_key, method, path, body)
     assert response.status_code == 401
     assert response.json()["code"] == "UNAUTHORIZED"
     assert configured_key not in response.text
+
+
+def test_configured_key_is_compared_without_surrounding_spaces(monkeypatch):
+    # Un valor pegado en el panel de Vercel o Render con espacios no debe dejar fuera al backend.
+    monkeypatch.setenv("AI_API_KEY", f"  {KEY}\n")
+    assert client.post("/predict", json=READING, headers={"X-AI-API-Key": KEY}).status_code == 200
