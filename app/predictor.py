@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -82,9 +82,9 @@ class RiskPredictor:
             probabilities.setdefault(label, 0.0)
         risk_probability = min(1.0, max(0.0, probabilities["WARNING"] + probabilities["FIRE"]))
         safety = evaluate_safety_rules(row, probabilities, model_prediction)
-        measured_at = reading.get("timestamp") or datetime.now(timezone.utc)
+        measured_at = reading.get("timestamp") or datetime.now(UTC)
         if measured_at.tzinfo is None:
-            measured_at = measured_at.replace(tzinfo=timezone.utc)
+            measured_at = measured_at.replace(tzinfo=UTC)
 
         return {
             "status": "ok",

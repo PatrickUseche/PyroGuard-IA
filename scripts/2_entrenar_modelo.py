@@ -1,7 +1,7 @@
 """Entrena y evalúa el Random Forest. Genera el artefacto utilizado por la API."""
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import joblib
@@ -65,7 +65,7 @@ def main() -> None:
     predictions = model.predict(X_test)
     metrics = {
         "model_version": MODEL_VERSION,
-        "trained_at_utc": datetime.now(timezone.utc).isoformat(),
+        "trained_at_utc": datetime.now(UTC).isoformat(),
         "dataset_type": "synthetic",
         "dataset_path": DATA_PATH.relative_to(ROOT).as_posix(),
         "dataset_sha256": dataset_sha256(DATA_PATH),

@@ -91,7 +91,7 @@ del despliegue.
 - [x] test(scripts): pruebas de esa validación (columnas, vacíos y clases) [6.15]
 - [x] chore(lint): ruff en `requirements-dev.txt` y `ruff.toml` [6.16]
 - [x] style: ordenar los imports (ruff I001) [6.17]
-- [ ] style: `datetime.UTC` e import obsoleto de `typing` (ruff UP017, UP035) [6.18]
+- [x] style: `datetime.UTC` e import obsoleto de `typing` (ruff UP017, UP035) [6.18]
 - [ ] style: `zip(..., strict=True)` (ruff B905) [6.19]
 - [ ] style: unir los `with` anidados (ruff SIM117) [6.20]
 - [ ] style: líneas largas e import fuera de lugar (ruff E501, E402) [6.21]

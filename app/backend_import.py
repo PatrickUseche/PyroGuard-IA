@@ -4,7 +4,8 @@ Usa `GET /api/nodes/` y `GET /api/nodes/<id>/readings/` (paginado, máximo 500 p
 que el backend tenga `PUBLIC_READ_ACCESS=True`; un script no puede iniciar sesión con Google, así que se admite un token
 de DRF en la cabecera `Authorization: Token <token>`.
 """
-from typing import Any, Callable, Iterator
+from collections.abc import Callable, Iterator
+from typing import Any
 
 import pandas as pd
 
