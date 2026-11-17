@@ -20,3 +20,17 @@ def test_public_routes_stay_open_and_do_not_leak_the_key(configured_key, path):
     response = client.get(path)
     assert response.status_code == 200
     assert configured_key not in response.text
+
+
+@pytest.mark.parametrize(
+    ("method", "path", "body"),
+    [("get", "/metrics", None), ("post", "/predict/batch", {"readings": [READING]}), ("post", "/predict", READING)],
+)
+def test_protected_routes_reject_a_wrong_key(configured_key, method, path, body):
+    kwargs = {"headers": {"X-AI-API-Key": "otra-clave"}}
+    if body is not None:
+        kwargs["json"] = body
+    response = getattr(client, method)(path, **kwargs)
+    assert response.status_code == 401
+    assert response.json()["code"] == "UNAUTHORIZED"
+    assert configured_key not in response.text

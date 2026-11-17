@@ -105,7 +105,7 @@ del despliegue.
 - [x] test(scripts): pruebas del verificador con respuestas simuladas [6.29]
 - [x] docs: verificador de despliegue en el README [6.30]
 - [x] test(security): `/health` y `/` siguen públicos con clave configurada y no la exponen [6.31]
-- [ ] test(security): `/metrics` y `/predict/batch` rechazan una clave incorrecta [6.32]
+- [x] test(security): `/metrics` y `/predict/batch` rechazan una clave incorrecta [6.32]
 - [ ] test(security): la clave configurada se compara sin los espacios de la variable de entorno [6.33]
 - [ ] test(security): la clave distingue mayúsculas y no admite prefijos [6.34]
 - [ ] docs(env): `.env.example` documenta `PORT` [6.35]
