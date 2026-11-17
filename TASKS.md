@@ -99,7 +99,7 @@ del despliegue.
 - [x] chore(ci): medir la cobertura con coverage.py [6.23]
 - [x] chore(ci): resumen de cobertura en el job [6.24]
 - [x] chore(git): ignorar `.coverage` y `htmlcov/` [6.25]
-- [ ] test(deploy): `vercel.json` incluye el modelo y excluye lo que no hace falta en ejecución [6.26]
+- [x] test(deploy): `vercel.json` incluye el modelo y excluye lo que no hace falta en ejecución [6.26]
 - [ ] test(deploy): `render.yaml` fija `APP_ENV=production` y deja `AI_API_KEY` como secreto [6.27]
 - [ ] feat(scripts): `7_verificar_despliegue.py` comprueba `/health` y `/predict` de una URL [6.28]
 - [ ] test(scripts): pruebas del verificador con respuestas simuladas [6.29]
