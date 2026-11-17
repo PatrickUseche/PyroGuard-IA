@@ -40,3 +40,8 @@ def test_configured_key_is_compared_without_surrounding_spaces(monkeypatch):
     # Un valor pegado en el panel de Vercel o Render con espacios no debe dejar fuera al backend.
     monkeypatch.setenv("AI_API_KEY", f"  {KEY}\n")
     assert client.post("/predict", json=READING, headers={"X-AI-API-Key": KEY}).status_code == 200
+
+
+@pytest.mark.parametrize("sent", [KEY.upper(), KEY[:-1], KEY + "x", ""])
+def test_key_is_case_sensitive_and_must_match_exactly(configured_key, sent):
+    assert client.post("/predict", json=READING, headers={"X-AI-API-Key": sent}).status_code == 401

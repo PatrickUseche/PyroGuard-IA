@@ -107,7 +107,7 @@ del despliegue.
 - [x] test(security): `/health` y `/` siguen públicos con clave configurada y no la exponen [6.31]
 - [x] test(security): `/metrics` y `/predict/batch` rechazan una clave incorrecta [6.32]
 - [x] test(security): la clave configurada se compara sin los espacios de la variable de entorno [6.33]
-- [ ] test(security): la clave distingue mayúsculas y no admite prefijos [6.34]
+- [x] test(security): la clave distingue mayúsculas y no admite prefijos [6.34]
 - [ ] docs(env): `.env.example` documenta `PORT` [6.35]
 - [ ] docs: `CHANGELOG.md` con las versiones del modelo y del contrato [6.36]
 - [ ] docs(readme): insignia del workflow de pruebas [6.37]
