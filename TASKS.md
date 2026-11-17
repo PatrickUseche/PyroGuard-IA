@@ -111,4 +111,4 @@ del despliegue.
 - [x] docs(env): `.env.example` documenta `PORT` [6.35]
 - [x] docs: `CHANGELOG.md` con las versiones del modelo y del contrato [6.36]
 - [x] docs(readme): insignia del workflow de pruebas [6.37]
-- [ ] docs(tasks): cierre de la Fase 6 en `ENTREGA_AVANCE.md` [6.38]
+- [x] docs(tasks): cierre de la Fase 6 en `ENTREGA_AVANCE.md` [6.38]

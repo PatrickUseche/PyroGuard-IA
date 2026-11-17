@@ -27,6 +27,13 @@
 - El backend debe tener `AI_SERVICE_URL=https://pyro-guard-ia.vercel.app` y la misma `AI_API_KEY` en Render; si no,
   su `/api/health/` muestra `ai: unavailable` y evalúa solo con reglas.
 
+## Calidad (Fase 6)
+
+- 264 pruebas automáticas en verde y 92 % de cobertura de líneas y ramas (`coverage run -m pytest` y `coverage report`).
+- `ruff check .` sin avisos; el CI ejecuta lint, pruebas y cobertura en Python 3.12 y 3.14.
+- El generador reproduce exactamente el dataset versionado (mismo SHA-256 que `models/modelo_riesgo.meta.json`).
+- `scripts/7_verificar_despliegue.py` comprueba el servicio desplegado.
+
 ## Requisitos cubiertos en este avance
 
 - RF06 — Cálculo de riesgo mediante IA.
