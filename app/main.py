@@ -17,6 +17,9 @@ from app.schemas import (
     SensorReadingInput,
 )
 
+# Versión del servicio (la que muestra /docs). Sube con cada cambio del contrato: 1.1.0 corresponde al contrato v1.1.
+SERVICE_VERSION = "1.1.0"
+
 def is_production() -> bool:
     return os.getenv("APP_ENV", "").strip().lower() == "production"
 
@@ -45,7 +48,7 @@ app = FastAPI(
         "Servicio local de Machine Learning para clasificar el riesgo ambiental en NORMAL, WARNING o FIRE. "
         "El modelo es Random Forest y el artefacto actual se entrenó con datos sintéticos."
     ),
-    version="1.0.0",
+    version=SERVICE_VERSION,
     lifespan=lifespan,
 )
 register_error_handlers(app)
