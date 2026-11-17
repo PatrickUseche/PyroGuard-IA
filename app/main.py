@@ -3,8 +3,10 @@ import os
 import time
 from contextlib import asynccontextmanager
 from functools import lru_cache
+
 from fastapi import Depends, FastAPI, Header, HTTPException, status
 from pydantic import ValidationError
+
 from app.errors import group_validation_errors, logger, register_error_handlers
 from app.metrics import metrics
 from app.predictor import RiskPredictor
@@ -16,6 +18,9 @@ from app.schemas import (
     PredictionResponse,
     SensorReadingInput,
 )
+
+# Versión del servicio (la que muestra /docs). Sube con cada cambio del contrato: 1.1.0 corresponde al contrato v1.1.
+SERVICE_VERSION = "1.1.0"
 
 def is_production() -> bool:
     return os.getenv("APP_ENV", "").strip().lower() == "production"
@@ -45,7 +50,7 @@ app = FastAPI(
         "Servicio local de Machine Learning para clasificar el riesgo ambiental en NORMAL, WARNING o FIRE. "
         "El modelo es Random Forest y el artefacto actual se entrenó con datos sintéticos."
     ),
-    version="1.0.0",
+    version=SERVICE_VERSION,
     lifespan=lifespan,
 )
 register_error_handlers(app)
@@ -54,6 +59,15 @@ register_error_handlers(app)
 @lru_cache(maxsize=1)
 def get_predictor() -> RiskPredictor:
     return RiskPredictor()
+
+
+def require_predictor() -> RiskPredictor:
+    """Devuelve el predictor o responde 503 si el artefacto no existe o no es válido."""
+    try:
+        return get_predictor()
+    except (FileNotFoundError, ValueError) as exc:
+        logger.error("No se pudo cargar el modelo: %s", exc)
+        raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
 
 
 def verify_api_key(x_ai_api_key: str | None = Header(default=None, alias="X-AI-API-Key")) -> None:
@@ -67,7 +81,15 @@ def verify_api_key(x_ai_api_key: str | None = Header(default=None, alias="X-AI-A
 
 @app.get("/", tags=["health"])
 def root() -> dict:
-    return {"service": "PyroGuard IA API", "docs": "/docs", "health": "/health", "prediction": "POST /predict"}
+    return {
+        "service": "PyroGuard IA API",
+        "version": SERVICE_VERSION,
+        "docs": "/docs",
+        "health": "/health",
+        "prediction": "POST /predict",
+        "batch_prediction": "POST /predict/batch",
+        "metrics": "/metrics",
+    }
 
 
 @app.get("/health", response_model=HealthResponse, tags=["health"])
@@ -87,11 +109,7 @@ def health() -> HealthResponse:
 
 @app.post("/predict", response_model=PredictionResponse, tags=["prediction"], dependencies=[Depends(verify_api_key)])
 def predict(reading: SensorReadingInput) -> dict:
-    try:
-        predictor = get_predictor()
-    except (FileNotFoundError, ValueError) as exc:
-        logger.error("No se pudo cargar el modelo: %s", exc)
-        raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
+    predictor = require_predictor()
     started = time.perf_counter()
     try:
         result = predictor.predict(reading.model_dump())
@@ -112,11 +130,7 @@ def predict_batch(batch: BatchRequest) -> dict:
         except ValidationError as exc:
             results[index] = {"status": "error", "index": index, "errors": group_validation_errors(exc.errors())}
     if valid:
-        try:
-            predictor = get_predictor()
-        except (FileNotFoundError, ValueError) as exc:
-            logger.error("No se pudo cargar el modelo: %s", exc)
-            raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
+        predictor = require_predictor()
         started = time.perf_counter()
         try:
             predictions = predictor.predict_many([reading for _, reading in valid])
@@ -124,7 +138,7 @@ def predict_batch(batch: BatchRequest) -> dict:
             logger.exception("Falló la predicción del lote de %d lecturas", len(valid))
             raise HTTPException(status_code=500, detail="No se pudo calcular la predicción.") from exc
         per_reading = (time.perf_counter() - started) / len(valid)
-        for (index, _), prediction in zip(valid, predictions):
+        for (index, _), prediction in zip(valid, predictions, strict=True):
             results[index] = prediction
             metrics.record_prediction(prediction["risk_level"], per_reading)
     failed = len(batch.readings) - len(valid)

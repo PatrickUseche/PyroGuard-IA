@@ -1,8 +1,9 @@
 """Entrena y evalúa el Random Forest. Genera el artefacto utilizado por la API."""
-from datetime import datetime, timezone
-from pathlib import Path
 import json
 import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
 import joblib
 import pandas as pd
 import sklearn
@@ -26,10 +27,11 @@ META_PATH = DEFAULT_META_PATH
 MODEL_VERSION = "pyroguard-rf-1.1.0"
 
 
-def main() -> None:
-    if not DATA_PATH.exists():
-        raise SystemExit(f"No se encontró {DATA_PATH}. Ejecuta primero scripts/1_generar_dataset.py")
-    data = pd.read_csv(DATA_PATH)
+def load_training_data(path: Path = DATA_PATH) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series]:
+    """Lee y valida el CSV de entrenamiento; devuelve ``(data, X, y)`` o termina con un mensaje claro."""
+    if not path.exists():
+        raise SystemExit(f"No se encontró {path}. Ejecuta primero scripts/1_generar_dataset.py")
+    data = pd.read_csv(path)
     missing = set(FEATURES + ["label"]) - set(data.columns)
     if missing:
         raise SystemExit(f"Faltan columnas necesarias: {sorted(missing)}")
@@ -40,6 +42,11 @@ def main() -> None:
     y = data["label"].astype(str)
     if set(y.unique()) != set(LABELS):
         raise SystemExit(f"Se esperaban las tres clases {LABELS}, pero se encontraron {sorted(y.unique())}")
+    return data, X, y
+
+
+def main() -> None:
+    data, X, y = load_training_data(DATA_PATH)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.20, random_state=42, stratify=y
@@ -58,7 +65,7 @@ def main() -> None:
     predictions = model.predict(X_test)
     metrics = {
         "model_version": MODEL_VERSION,
-        "trained_at_utc": datetime.now(timezone.utc).isoformat(),
+        "trained_at_utc": datetime.now(UTC).isoformat(),
         "dataset_type": "synthetic",
         "dataset_path": DATA_PATH.relative_to(ROOT).as_posix(),
         "dataset_sha256": dataset_sha256(DATA_PATH),
@@ -102,7 +109,9 @@ def main() -> None:
     print(f"Versión: {MODEL_VERSION}")
     print(f"Filas de entrenamiento: {len(X_train)} | Filas de prueba: {len(X_test)}")
     print(f"Accuracy sintético: {metrics['accuracy']:.4f}")
-    print(f"Calibración ({CALIBRATION_METHOD}): sin calibrar {metrics['calibration']['uncalibrated']} -> calibrado {metrics['calibration']['calibrated']}")
+    calibration = metrics["calibration"]
+    print(f"Calibración ({CALIBRATION_METHOD}):")
+    print(f"  sin calibrar {calibration['uncalibrated']} -> calibrado {calibration['calibrated']}")
     report = classification_report(y_test, predictions, labels=LABELS, zero_division=0)
     print(report)
     print(f"Modelo guardado: {MODEL_PATH}")

@@ -38,7 +38,7 @@ def expected_calibration_error(probabilities: np.ndarray, truth: pd.Series, clas
     correct = predicted == np.asarray(truth)
     error = 0.0
     edges = np.linspace(0.0, 1.0, bins + 1)
-    for low, high in zip(edges[:-1], edges[1:]):
+    for low, high in zip(edges[:-1], edges[1:], strict=True):
         in_bin = (confidence > low) & (confidence <= high)
         if in_bin.any():
             error += in_bin.mean() * abs(correct[in_bin].mean() - confidence[in_bin].mean())

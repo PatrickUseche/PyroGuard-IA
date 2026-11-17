@@ -114,3 +114,18 @@ def test_batch_with_only_invalid_readings_does_not_need_the_model(monkeypatch):
 
     monkeypatch.setattr(main, "get_predictor", failing_loader)
     assert post([INVALID]).status_code == 200
+
+
+def test_batch_answers_500_when_the_model_fails_while_classifying(monkeypatch):
+    from app import main
+
+    class BrokenPredictor:
+        def predict_many(self, readings):
+            raise ValueError("forma inesperada")
+
+    monkeypatch.setattr(main, "get_predictor", lambda: BrokenPredictor())
+    response = post([CALM, FIRE])
+    assert response.status_code == 500
+    assert response.json()["status"] == "error"
+    # Un lote fallido no cuenta predicciones en /metrics.
+    assert metrics.snapshot()["predictions_total"] == 0

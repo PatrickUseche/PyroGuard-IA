@@ -39,5 +39,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
+      - name: Lint (ruff)
+        run: ruff check .
+
       - name: Ejecutar pruebas
-        run: python -m pytest -q
+        run: python -m coverage run -m pytest -q
+
+      - name: Resumen de cobertura
+        if: always()
+        run: |
+          python -m coverage report
+          {
+            echo "### Cobertura (Python ${{ matrix.python-version }})"
+            echo '```'
+            python -m coverage report
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

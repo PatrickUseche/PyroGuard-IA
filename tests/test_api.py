@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+
 from app.main import app
 
 client = TestClient(app)
@@ -133,3 +134,26 @@ def test_health_has_no_dataset_hash_when_the_model_is_unavailable(monkeypatch):
     body = client.get("/health").json()
     assert body["status"] == "degraded"
     assert body["dataset_sha256"] is None
+
+
+def test_openapi_version_matches_service_version():
+    from app import main
+    from app.schemas import CONTRACT_VERSION
+
+    schema = client.get("/openapi.json").json()
+    assert schema["info"]["version"] == main.SERVICE_VERSION
+    # La versión del servicio empieza por la del contrato (1.1 -> 1.1.x).
+    assert main.SERVICE_VERSION.startswith(CONTRACT_VERSION + ".")
+
+
+def test_root_lists_every_endpoint():
+    from app import main
+
+    response = client.get("/")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["version"] == main.SERVICE_VERSION
+    assert body["prediction"] == "POST /predict"
+    assert body["batch_prediction"] == "POST /predict/batch"
+    assert body["metrics"] == "/metrics"
+    assert body["health"] == "/health"

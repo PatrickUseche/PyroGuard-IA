@@ -74,7 +74,8 @@ def test_missing_file_explains_how_to_create_it(tmp_path):
 
 def test_invalid_labeled_file_is_reported_as_evaluation_error(tmp_path):
     path = tmp_path / "malo.csv"
-    path.write_text("node_id,temperature,humidity,smoke,gas,flame,timestamp,label\nA,22,70,5,0,0,2026-11-01T10:00:00Z,\n", encoding="utf-8")
+    header = "node_id,temperature,humidity,smoke,gas,flame,timestamp,label\n"
+    path.write_text(header + "A,22,70,5,0,0,2026-11-01T10:00:00Z,\n", encoding="utf-8")
     with pytest.raises(EvaluationSetError, match="falta etiquetar"):
         load_evaluation_set(path)
 

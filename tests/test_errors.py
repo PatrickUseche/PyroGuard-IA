@@ -2,6 +2,7 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+
 from app import main
 from app.main import app
 
@@ -118,17 +119,15 @@ def test_wrong_method_is_not_allowed():
 def test_production_refuses_to_start_without_api_key(monkeypatch):
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.delenv("AI_API_KEY", raising=False)
-    with pytest.raises(RuntimeError, match="AI_API_KEY"):
-        with TestClient(app):
-            pass
+    with pytest.raises(RuntimeError, match="AI_API_KEY"), TestClient(app):
+        pass
 
 
 def test_production_refuses_a_blank_api_key(monkeypatch):
     monkeypatch.setenv("APP_ENV", "Production")
     monkeypatch.setenv("AI_API_KEY", "   ")
-    with pytest.raises(RuntimeError):
-        with TestClient(app):
-            pass
+    with pytest.raises(RuntimeError), TestClient(app):
+        pass
 
 
 def test_production_starts_with_api_key(monkeypatch):

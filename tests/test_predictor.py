@@ -88,3 +88,66 @@ def test_does_not_warn_when_scikit_learn_version_matches(caplog):
 def test_artifact_without_dataset_hash_loads_with_none(tmp_path):
     path = build_artifact(tmp_path, dataset_sha256=None)
     assert RiskPredictor(path).dataset_sha256 is None
+
+
+def _write_artifact(path, artifact):
+    import joblib
+
+    joblib.dump(artifact, path)
+    return path
+
+
+def test_artifact_without_model_metadata_is_rejected(tmp_path):
+    path = _write_artifact(tmp_path / "sin_meta.joblib", {"model_version": "x"})
+    with pytest.raises(ValueError, match="metadatos"):
+        RiskPredictor(path)
+
+
+def test_artifact_with_other_feature_columns_is_rejected(tmp_path, predictor):
+    artifact = {"model": predictor.model, "feature_columns": ["temperature", "humidity"]}
+    path = _write_artifact(tmp_path / "columnas.joblib", artifact)
+    with pytest.raises(ValueError, match="Columnas incompatibles"):
+        RiskPredictor(path)
+
+
+def test_artifact_with_unexpected_classes_is_rejected(tmp_path):
+    from sklearn.dummy import DummyClassifier
+
+    model = DummyClassifier().fit([[0, 0, 0, 0, 0], [1, 1, 1, 1, 1]], ["NORMAL", "OTRA"])
+    path = _write_artifact(tmp_path / "clases.joblib", {"model": model})
+    with pytest.raises(ValueError, match="Clases inesperadas"):
+        RiskPredictor(path)
+
+
+def test_warns_when_the_model_was_trained_with_another_sklearn(tmp_path, predictor, caplog):
+    artifact = {"model": predictor.model, "scikit_learn_version": "0.0.1"}
+    path = _write_artifact(tmp_path / "otra_version.joblib", artifact)
+    with caplog.at_level("WARNING", logger="pyroguard.api"):
+        RiskPredictor(path)
+    assert "0.0.1" in caplog.text
+
+
+def test_no_warning_when_sklearn_version_matches(tmp_path, predictor, caplog):
+    import sklearn
+
+    artifact = {"model": predictor.model, "scikit_learn_version": sklearn.__version__}
+    path = _write_artifact(tmp_path / "misma_version.joblib", artifact)
+    with caplog.at_level("WARNING", logger="pyroguard.api"):
+        RiskPredictor(path)
+    assert "reentrena" not in caplog.text
+
+
+def test_naive_timestamp_is_interpreted_as_utc(predictor):
+    from datetime import UTC, datetime
+
+    reading = dict(READINGS[0], timestamp=datetime(2026, 11, 17, 12, 30))
+    result = predictor.predict(reading)
+    assert result["timestamp"] == datetime(2026, 11, 17, 12, 30, tzinfo=UTC)
+
+
+def test_missing_timestamp_uses_the_current_utc_time(predictor):
+    from datetime import UTC, datetime, timedelta
+
+    result = predictor.predict(READINGS[0])
+    assert result["timestamp"].tzinfo is not None
+    assert abs(datetime.now(UTC) - result["timestamp"]) < timedelta(seconds=5)

@@ -12,3 +12,8 @@ reports/*.csv
 
 # Lecturas importadas del backend pendientes de etiquetar (las etiquetadas sí se versionan).
 data/por_etiquetar*.csv
+
+# Cobertura local (coverage.py).
+.coverage
+.coverage.*
+htmlcov/

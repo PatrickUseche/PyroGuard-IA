@@ -28,7 +28,9 @@ def production_forest() -> RandomForestClassifier:
 def candidate_models() -> dict[str, Any]:
     return {
         PRODUCTION_MODEL: production_forest(),
-        "ExtraTrees": ExtraTreesClassifier(n_estimators=300, min_samples_leaf=2, class_weight="balanced", random_state=SEED, n_jobs=-1),
+        "ExtraTrees": ExtraTreesClassifier(
+            n_estimators=300, min_samples_leaf=2, class_weight="balanced", random_state=SEED, n_jobs=-1
+        ),
         "HistGradientBoosting": HistGradientBoostingClassifier(class_weight="balanced", random_state=SEED),
         "DecisionTree": DecisionTreeClassifier(min_samples_leaf=5, class_weight="balanced", random_state=SEED),
         "LogisticRegression": make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000, class_weight="balanced")),

@@ -1,0 +1,16 @@
+# Configuración de ruff para PyroGuard-IA (mismo estilo que PyroGuard-Backend).
+# Uso: `ruff check .` (el CI lo ejecuta en cada push y pull request).
+line-length = 130
+target-version = "py312"
+extend-exclude = [".venv", "venv", "models", "data", "reports"]
+
+[lint]
+# E/W: pycodestyle, F: pyflakes, I: orden de imports, B: bugbear, UP: pyupgrade, SIM: simplificaciones.
+select = ["E", "W", "F", "I", "B", "UP", "SIM"]
+
+[lint.per-file-ignores]
+# Los scripts añaden la raíz del repo a sys.path antes de importar app.*.
+"scripts/*.py" = ["E402"]
+
+[lint.isort]
+known-first-party = ["app"]

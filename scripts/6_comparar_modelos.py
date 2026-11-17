@@ -26,7 +26,10 @@ def main(argv: list[str] | None = None) -> int:
     data = pd.read_csv(DATA_PATH)
     rows = compare_models(data, folds=args.folds)
     for row in rows:
-        print(f"{row['model']:22} F1 macro {row['f1_macro_mean']:.4f} ± {row['f1_macro_std']:.4f} | exactitud {row['accuracy_mean']:.4f}")
+        print(
+            f"{row['model']:22} F1 macro {row['f1_macro_mean']:.4f} ± {row['f1_macro_std']:.4f} "
+            f"| exactitud {row['accuracy_mean']:.4f}"
+        )
     args.out.write_text(
         render_markdown(rows, len(data), dataset_sha256(DATA_PATH), args.folds, date.today().isoformat()), encoding="utf-8"
     )

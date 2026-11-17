@@ -1,7 +1,8 @@
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 import joblib
 import pandas as pd
 import sklearn
@@ -70,20 +71,22 @@ class RiskPredictor:
         model_predictions = self.model.classes_[raw_probabilities.argmax(axis=1)]
         return [
             self._build_result(reading, row, str(prediction), probabilities)
-            for reading, row, prediction, probabilities in zip(readings, rows, model_predictions, raw_probabilities)
+            for reading, row, prediction, probabilities in zip(readings, rows, model_predictions, raw_probabilities, strict=True)
         ]
 
     def _build_result(
         self, reading: dict[str, Any], row: dict[str, float], model_prediction: str, raw_probabilities: Any
     ) -> dict[str, Any]:
-        probabilities = {str(label): round(float(prob), 6) for label, prob in zip(self.model.classes_, raw_probabilities)}
+        probabilities = {
+            str(label): round(float(prob), 6) for label, prob in zip(self.model.classes_, raw_probabilities, strict=True)
+        }
         for label in ("NORMAL", "WARNING", "FIRE"):
             probabilities.setdefault(label, 0.0)
         risk_probability = min(1.0, max(0.0, probabilities["WARNING"] + probabilities["FIRE"]))
         safety = evaluate_safety_rules(row, probabilities, model_prediction)
-        measured_at = reading.get("timestamp") or datetime.now(timezone.utc)
+        measured_at = reading.get("timestamp") or datetime.now(UTC)
         if measured_at.tzinfo is None:
-            measured_at = measured_at.replace(tzinfo=timezone.utc)
+            measured_at = measured_at.replace(tzinfo=UTC)
 
         return {
             "status": "ok",

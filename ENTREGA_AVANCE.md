@@ -19,6 +19,21 @@
 - [x] Importador de lecturas del backend, validador de CSV etiquetado e informe de precisión, recall y F1 por clase (`docs/ETIQUETADO.md`).
 - [x] Pruebas de regresión con escenarios `normal`, `warning` y `fire`.
 
+## Despliegue
+
+- Servicio en producción: `https://pyro-guard-ia.vercel.app` (Vercel, función de Python con el modelo incluido).
+- `GET https://pyro-guard-ia.vercel.app/health` responde `status: ok`, `model_loaded: true` y `model_version: pyroguard-rf-1.1.0`.
+- `POST /predict` sin `X-AI-API-Key` responde `401 UNAUTHORIZED`: la clave está configurada en Vercel.
+- El backend debe tener `AI_SERVICE_URL=https://pyro-guard-ia.vercel.app` y la misma `AI_API_KEY` en Render; si no,
+  su `/api/health/` muestra `ai: unavailable` y evalúa solo con reglas.
+
+## Calidad (Fase 6)
+
+- 267 pruebas automáticas en verde y 92 % de cobertura de líneas y ramas (`coverage run -m pytest` y `coverage report`).
+- `ruff check .` sin avisos; el CI ejecuta lint, pruebas y cobertura en Python 3.12 y 3.14.
+- El generador reproduce exactamente el dataset versionado (mismo SHA-256 que `models/modelo_riesgo.meta.json`).
+- `scripts/7_verificar_despliegue.py` comprueba el servicio desplegado.
+
 ## Requisitos cubiertos en este avance
 
 - RF06 — Cálculo de riesgo mediante IA.
@@ -35,6 +50,7 @@
 2. Ejecutar `python -m pytest -q` para mostrar el resultado de las pruebas.
 3. Iniciar `start_windows.cmd`, abrir `/docs` y probar `POST /predict` con el JSON de README.
 4. Revisar `docs/CONTRATO_IA_BACKEND.md` para el flujo de integración con el backend.
+5. Abrir `https://pyro-guard-ia.vercel.app/docs` para mostrar el servicio desplegado.
 
 ## Limitación declarada
 

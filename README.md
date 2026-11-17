@@ -1,5 +1,7 @@
 # PyroGuard-IA — Servicio de Machine Learning
 
+[![Tests](https://github.com/PatrickUseche/PyroGuard-IA/actions/workflows/tests.yml/badge.svg)](https://github.com/PatrickUseche/PyroGuard-IA/actions/workflows/tests.yml)
+
 Servicio de inferencia de IA para **PyroGuard / Forest Guardian**. Implementa un clasificador **Random Forest** entrenado localmente con un dataset sintético y lo expone mediante una API REST propia con FastAPI.
 
 > **Alcance real:** es un prototipo académico reproducible. El dataset es sintético; no se debe presentar el modelo como detector certificado de incendios reales ni usarlo como único mecanismo de seguridad.
@@ -124,6 +126,19 @@ Para medir el modelo con lecturas del backend etiquetadas a mano: `scripts/4_imp
 etiquetar y `scripts/5_informe_metricas.py` calcula precisión, recall y F1 por clase. El flujo, el esquema del CSV y
 los límites de esos datos (vienen del simulador) están en [docs/ETIQUETADO.md](docs/ETIQUETADO.md).
 
+## Calidad
+
+```bash
+pip install -r requirements-dev.txt
+ruff check .
+python -m coverage run -m pytest -q
+python -m coverage report
+```
+
+`ruff.toml` define las reglas (pycodestyle, pyflakes, orden de imports, bugbear, pyupgrade y simplificaciones) y
+`.coveragerc` mide `app/` y `scripts/` con ramas. GitHub Actions ejecuta los tres pasos en Python 3.12 y 3.14 y
+publica el resumen de cobertura en el job.
+
 ## Variables de entorno
 
 Copia `.env.example` a `.env` si quieres documentar variables localmente (el código no carga `.env` automáticamente para la IA). Las variables deben definirse en el entorno del proceso o plataforma:
@@ -163,7 +178,11 @@ Angular Dashboard
 
 ## Despliegue
 
-### Render
+**Producción:** el servicio está desplegado en Vercel en `https://pyro-guard-ia.vercel.app`
+(`/health` es público; `/predict`, `/predict/batch` y `/metrics` exigen `X-AI-API-Key`). El backend lo usa con
+`AI_SERVICE_URL=https://pyro-guard-ia.vercel.app`.
+
+### Render (alternativa)
 
 1. Crea un Web Service apuntando al repositorio `PyroGuard-IA`.
 2. Usa `render.yaml` (o define Build Command `pip install -r requirements.txt`, Start Command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, Health Check Path `/health`).
@@ -173,7 +192,7 @@ Angular Dashboard
 
 No escribas el dominio de ejemplo como si fuera real: usa la URL que la plataforma genere al desplegar.
 
-### Vercel (gratis, sin tarjeta)
+### Vercel (gratis, sin tarjeta; es el despliegue actual)
 
 `vercel.json` incluye el modelo (`models/**`) en la función y excluye lo que no hace falta en ejecución. Vercel detecta `app/main.py` como entrada de FastAPI.
 
@@ -183,6 +202,17 @@ No escribas el dominio de ejemplo como si fuera real: usa la URL que la platafor
 4. En el backend: `AI_SERVICE_URL=https://<proyecto>.vercel.app` (sin barra final) y la misma `AI_API_KEY`.
 
 Si el build falla por tamaño, el límite es ~500 MB por función (`scikit-learn`, `scipy`, `pandas` y `numpy` rozan esa cifra). La primera petición tras un rato sin uso tarda más por el arranque en frío.
+
+### Verificar un despliegue
+
+```bash
+python scripts/7_verificar_despliegue.py --url https://pyro-guard-ia.vercel.app
+python scripts/7_verificar_despliegue.py --url https://pyro-guard-ia.vercel.app --key "$AI_API_KEY"
+```
+
+Comprueba que `/health` responde `ok` con el modelo cargado y que `/predict` está protegido (sin clave espera `401`)
+o clasifica una lectura de ejemplo con el contrato vigente (con clave). Termina con código 1 si algo falla, así que sirve
+también en un pipeline. Toma `AI_SERVICE_URL` y `AI_API_KEY` del entorno si no se pasan los argumentos.
 
 ## Limitaciones y trabajo pendiente
 

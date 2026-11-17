@@ -1,5 +1,6 @@
 """Genera un dataset sintético balanceado para desarrollo; no representa datos de campo."""
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
