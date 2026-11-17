@@ -79,7 +79,7 @@ del despliegue.
 - [x] fix(api): versión de la app FastAPI (OpenAPI) alineada con la del servicio `1.1.0` [6.3]
 - [x] test(api): la versión de OpenAPI coincide con `SERVICE_VERSION` [6.4]
 - [x] feat(api): `GET /` enumera también `/predict/batch` y `/metrics` [6.5]
-- [ ] test(api): prueba de `GET /` [6.6]
+- [x] test(api): prueba de `GET /` [6.6]
 - [ ] refactor(api): una sola función que carga el predictor o responde 503 [6.7]
 - [ ] test(api): `/predict/batch` responde 500 si el modelo falla al clasificar el lote [6.8]
 - [ ] test(predictor): artefacto sin metadatos, con columnas o con clases incompatibles [6.9]
