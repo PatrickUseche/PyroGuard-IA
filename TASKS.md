@@ -108,7 +108,7 @@ del despliegue.
 - [x] test(security): `/metrics` y `/predict/batch` rechazan una clave incorrecta [6.32]
 - [x] test(security): la clave configurada se compara sin los espacios de la variable de entorno [6.33]
 - [x] test(security): la clave distingue mayúsculas y no admite prefijos [6.34]
-- [ ] docs(env): `.env.example` documenta `PORT` [6.35]
+- [x] docs(env): `.env.example` documenta `PORT` [6.35]
 - [ ] docs: `CHANGELOG.md` con las versiones del modelo y del contrato [6.36]
 - [ ] docs(readme): insignia del workflow de pruebas [6.37]
 - [ ] docs(tasks): cierre de la Fase 6 en `ENTREGA_AVANCE.md` [6.38]
