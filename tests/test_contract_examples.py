@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+
 from app import main
 from app.main import app
 from app.schemas import BatchResponse, MetricsResponse, PredictionResponse

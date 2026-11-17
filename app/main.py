@@ -3,8 +3,10 @@ import os
 import time
 from contextlib import asynccontextmanager
 from functools import lru_cache
+
 from fastapi import Depends, FastAPI, Header, HTTPException, status
 from pydantic import ValidationError
+
 from app.errors import group_validation_errors, logger, register_error_handlers
 from app.metrics import metrics
 from app.predictor import RiskPredictor

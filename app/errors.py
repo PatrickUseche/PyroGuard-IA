@@ -1,6 +1,7 @@
 """Respuestas de error uniformes según la sección 4 de docs/CONTRATO_IA_BACKEND.md."""
 import logging
 from typing import Any
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse

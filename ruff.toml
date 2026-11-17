@@ -11,3 +11,6 @@ select = ["E", "W", "F", "I", "B", "UP", "SIM"]
 [lint.per-file-ignores]
 # Los scripts añaden la raíz del repo a sys.path antes de importar app.*.
 "scripts/*.py" = ["E402"]
+
+[lint.isort]
+known-first-party = ["app"]

@@ -1,8 +1,9 @@
 """Entrena y evalúa el Random Forest. Genera el artefacto utilizado por la API."""
-from datetime import datetime, timezone
-from pathlib import Path
 import json
 import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
 import joblib
 import pandas as pd
 import sklearn
