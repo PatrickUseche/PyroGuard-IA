@@ -87,7 +87,7 @@ del despliegue.
 - [x] test(predictor): un `timestamp` sin zona horaria se interpreta como UTC [6.11]
 - [x] test(data): el generador reproduce el CSV versionado (mismo SHA-256 que `meta.json`) [6.12]
 - [x] test(data): el dataset generado está balanceado y dentro de los rangos del contrato [6.13]
-- [ ] refactor(scripts): extraer la carga y validación del dataset de `2_entrenar_modelo.py` a una función [6.14]
+- [x] refactor(scripts): extraer la carga y validación del dataset de `2_entrenar_modelo.py` a una función [6.14]
 - [ ] test(scripts): pruebas de esa validación (columnas, vacíos y clases) [6.15]
 - [ ] chore(lint): ruff en `requirements-dev.txt` y `ruff.toml` [6.16]
 - [ ] style: ordenar los imports (ruff I001) [6.17]

@@ -26,10 +26,11 @@ META_PATH = DEFAULT_META_PATH
 MODEL_VERSION = "pyroguard-rf-1.1.0"
 
 
-def main() -> None:
-    if not DATA_PATH.exists():
-        raise SystemExit(f"No se encontró {DATA_PATH}. Ejecuta primero scripts/1_generar_dataset.py")
-    data = pd.read_csv(DATA_PATH)
+def load_training_data(path: Path = DATA_PATH) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series]:
+    """Lee y valida el CSV de entrenamiento; devuelve ``(data, X, y)`` o termina con un mensaje claro."""
+    if not path.exists():
+        raise SystemExit(f"No se encontró {path}. Ejecuta primero scripts/1_generar_dataset.py")
+    data = pd.read_csv(path)
     missing = set(FEATURES + ["label"]) - set(data.columns)
     if missing:
         raise SystemExit(f"Faltan columnas necesarias: {sorted(missing)}")
@@ -40,6 +41,11 @@ def main() -> None:
     y = data["label"].astype(str)
     if set(y.unique()) != set(LABELS):
         raise SystemExit(f"Se esperaban las tres clases {LABELS}, pero se encontraron {sorted(y.unique())}")
+    return data, X, y
+
+
+def main() -> None:
+    data, X, y = load_training_data(DATA_PATH)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.20, random_state=42, stratify=y
