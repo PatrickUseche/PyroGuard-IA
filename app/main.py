@@ -59,6 +59,15 @@ def get_predictor() -> RiskPredictor:
     return RiskPredictor()
 
 
+def require_predictor() -> RiskPredictor:
+    """Devuelve el predictor o responde 503 si el artefacto no existe o no es válido."""
+    try:
+        return get_predictor()
+    except (FileNotFoundError, ValueError) as exc:
+        logger.error("No se pudo cargar el modelo: %s", exc)
+        raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
+
+
 def verify_api_key(x_ai_api_key: str | None = Header(default=None, alias="X-AI-API-Key")) -> None:
     expected = os.getenv("AI_API_KEY", "").strip()
     # Sin clave configurada se permite el uso local; con APP_ENV=production el servicio ni siquiera arranca así.
@@ -98,11 +107,7 @@ def health() -> HealthResponse:
 
 @app.post("/predict", response_model=PredictionResponse, tags=["prediction"], dependencies=[Depends(verify_api_key)])
 def predict(reading: SensorReadingInput) -> dict:
-    try:
-        predictor = get_predictor()
-    except (FileNotFoundError, ValueError) as exc:
-        logger.error("No se pudo cargar el modelo: %s", exc)
-        raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
+    predictor = require_predictor()
     started = time.perf_counter()
     try:
         result = predictor.predict(reading.model_dump())
@@ -123,11 +128,7 @@ def predict_batch(batch: BatchRequest) -> dict:
         except ValidationError as exc:
             results[index] = {"status": "error", "index": index, "errors": group_validation_errors(exc.errors())}
     if valid:
-        try:
-            predictor = get_predictor()
-        except (FileNotFoundError, ValueError) as exc:
-            logger.error("No se pudo cargar el modelo: %s", exc)
-            raise HTTPException(status_code=503, detail="Modelo no disponible. Ejecuta scripts/2_entrenar_modelo.py.") from exc
+        predictor = require_predictor()
         started = time.perf_counter()
         try:
             predictions = predictor.predict_many([reading for _, reading in valid])

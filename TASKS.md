@@ -80,7 +80,7 @@ del despliegue.
 - [x] test(api): la versión de OpenAPI coincide con `SERVICE_VERSION` [6.4]
 - [x] feat(api): `GET /` enumera también `/predict/batch` y `/metrics` [6.5]
 - [x] test(api): prueba de `GET /` [6.6]
-- [ ] refactor(api): una sola función que carga el predictor o responde 503 [6.7]
+- [x] refactor(api): una sola función que carga el predictor o responde 503 [6.7]
 - [ ] test(api): `/predict/batch` responde 500 si el modelo falla al clasificar el lote [6.8]
 - [ ] test(predictor): artefacto sin metadatos, con columnas o con clases incompatibles [6.9]
 - [ ] test(predictor): aviso cuando cambia la versión de scikit-learn [6.10]
