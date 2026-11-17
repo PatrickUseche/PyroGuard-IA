@@ -101,7 +101,7 @@ del despliegue.
 - [x] chore(git): ignorar `.coverage` y `htmlcov/` [6.25]
 - [x] test(deploy): `vercel.json` incluye el modelo y excluye lo que no hace falta en ejecución [6.26]
 - [x] test(deploy): `render.yaml` fija `APP_ENV=production` y deja `AI_API_KEY` como secreto [6.27]
-- [ ] feat(scripts): `7_verificar_despliegue.py` comprueba `/health` y `/predict` de una URL [6.28]
+- [x] feat(scripts): `7_verificar_despliegue.py` comprueba `/health` y `/predict` de una URL [6.28]
 - [ ] test(scripts): pruebas del verificador con respuestas simuladas [6.29]
 - [ ] docs: verificador de despliegue en el README [6.30]
 - [ ] feat(api): `/health` incluye `contract_version` y el contrato lo documenta [6.31]
