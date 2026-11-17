@@ -135,3 +135,19 @@ def test_no_warning_when_sklearn_version_matches(tmp_path, predictor, caplog):
     with caplog.at_level("WARNING", logger="pyroguard.api"):
         RiskPredictor(path)
     assert "reentrena" not in caplog.text
+
+
+def test_naive_timestamp_is_interpreted_as_utc(predictor):
+    from datetime import UTC, datetime
+
+    reading = dict(READINGS[0], timestamp=datetime(2026, 11, 17, 12, 30))
+    result = predictor.predict(reading)
+    assert result["timestamp"] == datetime(2026, 11, 17, 12, 30, tzinfo=UTC)
+
+
+def test_missing_timestamp_uses_the_current_utc_time(predictor):
+    from datetime import UTC, datetime, timedelta
+
+    result = predictor.predict(READINGS[0])
+    assert result["timestamp"].tzinfo is not None
+    assert abs(datetime.now(UTC) - result["timestamp"]) < timedelta(seconds=5)
