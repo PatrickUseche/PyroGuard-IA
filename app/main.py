@@ -138,7 +138,7 @@ def predict_batch(batch: BatchRequest) -> dict:
             logger.exception("Falló la predicción del lote de %d lecturas", len(valid))
             raise HTTPException(status_code=500, detail="No se pudo calcular la predicción.") from exc
         per_reading = (time.perf_counter() - started) / len(valid)
-        for (index, _), prediction in zip(valid, predictions):
+        for (index, _), prediction in zip(valid, predictions, strict=True):
             results[index] = prediction
             metrics.record_prediction(prediction["risk_level"], per_reading)
     failed = len(batch.readings) - len(valid)

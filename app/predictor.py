@@ -71,13 +71,13 @@ class RiskPredictor:
         model_predictions = self.model.classes_[raw_probabilities.argmax(axis=1)]
         return [
             self._build_result(reading, row, str(prediction), probabilities)
-            for reading, row, prediction, probabilities in zip(readings, rows, model_predictions, raw_probabilities)
+            for reading, row, prediction, probabilities in zip(readings, rows, model_predictions, raw_probabilities, strict=True)
         ]
 
     def _build_result(
         self, reading: dict[str, Any], row: dict[str, float], model_prediction: str, raw_probabilities: Any
     ) -> dict[str, Any]:
-        probabilities = {str(label): round(float(prob), 6) for label, prob in zip(self.model.classes_, raw_probabilities)}
+        probabilities = {str(label): round(float(prob), 6) for label, prob in zip(self.model.classes_, raw_probabilities, strict=True)}
         for label in ("NORMAL", "WARNING", "FIRE"):
             probabilities.setdefault(label, 0.0)
         risk_probability = min(1.0, max(0.0, probabilities["WARNING"] + probabilities["FIRE"]))
