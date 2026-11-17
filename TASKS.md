@@ -93,7 +93,7 @@ del despliegue.
 - [x] style: ordenar los imports (ruff I001) [6.17]
 - [x] style: `datetime.UTC` e import obsoleto de `typing` (ruff UP017, UP035) [6.18]
 - [x] style: `zip(..., strict=True)` (ruff B905) [6.19]
-- [ ] style: unir los `with` anidados (ruff SIM117) [6.20]
+- [x] style: unir los `with` anidados (ruff SIM117) [6.20]
 - [ ] style: líneas largas e import fuera de lugar (ruff E501, E402) [6.21]
 - [ ] chore(ci): paso de ruff en GitHub Actions [6.22]
 - [ ] chore(ci): medir la cobertura con coverage.py [6.23]
