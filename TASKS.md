@@ -112,3 +112,9 @@ del despliegue.
 - [x] docs: `CHANGELOG.md` con las versiones del modelo y del contrato [6.36]
 - [x] docs(readme): insignia del workflow de pruebas [6.37]
 - [x] docs(tasks): cierre de la Fase 6 en `ENTREGA_AVANCE.md` [6.38]
+
+### Ampliación de la Fase 6
+
+- [ ] test(predictor): con lecturas aleatorias dentro del contrato, las probabilidades suman 1 y el riesgo es coherente [6.39]
+- [ ] docs(readme): sección de calidad con los comandos de ruff y coverage [6.40]
+- [ ] docs(contract): cómo verificar el contrato contra el servicio desplegado [6.41]
