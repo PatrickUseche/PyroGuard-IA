@@ -103,7 +103,7 @@ del despliegue.
 - [x] test(deploy): `render.yaml` fija `APP_ENV=production` y deja `AI_API_KEY` como secreto [6.27]
 - [x] feat(scripts): `7_verificar_despliegue.py` comprueba `/health` y `/predict` de una URL [6.28]
 - [x] test(scripts): pruebas del verificador con respuestas simuladas [6.29]
-- [ ] docs: verificador de despliegue en el README [6.30]
+- [x] docs: verificador de despliegue en el README [6.30]
 - [ ] feat(api): `/health` incluye `contract_version` y el contrato lo documenta [6.31]
 - [ ] test(api): `/health` devuelve `contract_version` también en `degraded` [6.32]
 - [ ] test(security): la clave configurada se compara sin los espacios de la variable de entorno [6.33]

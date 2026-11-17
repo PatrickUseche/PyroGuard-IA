@@ -188,6 +188,17 @@ No escribas el dominio de ejemplo como si fuera real: usa la URL que la platafor
 
 Si el build falla por tamaño, el límite es ~500 MB por función (`scikit-learn`, `scipy`, `pandas` y `numpy` rozan esa cifra). La primera petición tras un rato sin uso tarda más por el arranque en frío.
 
+### Verificar un despliegue
+
+```bash
+python scripts/7_verificar_despliegue.py --url https://pyro-guard-ia.vercel.app
+python scripts/7_verificar_despliegue.py --url https://pyro-guard-ia.vercel.app --key "$AI_API_KEY"
+```
+
+Comprueba que `/health` responde `ok` con el modelo cargado y que `/predict` está protegido (sin clave espera `401`)
+o clasifica una lectura de ejemplo con el contrato vigente (con clave). Termina con código 1 si algo falla, así que sirve
+también en un pipeline. Toma `AI_SERVICE_URL` y `AI_API_KEY` del entorno si no se pasan los argumentos.
+
 ## Limitaciones y trabajo pendiente
 
 - Sustituir progresivamente el dataset sintético por datos reales, etiquetados y recogidos bajo supervisión segura. Hoy el backend solo recibe lecturas del simulador: el flujo de etiquetado está listo, pero `data/lecturas_etiquetadas.csv` no existe todavía y las métricas por clase sobre datos etiquetados quedan pendientes.
